@@ -1,0 +1,4 @@
+name: clansv2
+version: '1.0-SNAPSHOT'
+main: org.quintilis.clansv2.Clansv2
+api-version: '1.21'
