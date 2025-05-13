@@ -37,7 +37,12 @@ class ClanCommand(
     }
     
     override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<out String?>): List<String?>? {
-        return ClanCommands.entries.map { it.command }
+        if(p3.size == 1) {
+            return ClanCommands.entries.map { it.command }
+        }else if (p3.size == 2) {
+            return listOf()
+        }
+        return null
     }
     
     
