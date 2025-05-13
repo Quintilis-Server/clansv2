@@ -1,0 +1,8 @@
+database:
+  mongodb:
+    uri: "mongodb://localhost:27017"
+invites:
+  ally:
+    expirationTime: 2
+  player:
+    expirationTime: 1
