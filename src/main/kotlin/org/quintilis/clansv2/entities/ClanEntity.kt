@@ -7,8 +7,14 @@ import java.util.UUID
 data class ClanEntity(
     @BsonId val id: ObjectId = ObjectId(),
     val name: String,
+    val tag: String?,
     val members: MutableList<UUID> = mutableListOf(),
     val points: Int = 0,
     val allies: MutableList<ObjectId> = mutableListOf(),
-    val enemies: MutableList<ObjectId> = mutableListOf()
-)
+    val enemies: MutableList<ObjectId> = mutableListOf(),
+    val owner: UUID,
+) {
+    override fun toString(): String{
+        return "Name: $name, Tag: $tag, Owner: $owner"
+    }
+}
