@@ -3,6 +3,6 @@ database:
     uri: "mongodb://localhost:27017"
 invites:
   ally:
-    expirationTime: 2
+    expiration: 2
   player:
-    expirationTime: 1
+    expiration: 1

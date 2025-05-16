@@ -5,7 +5,7 @@ import org.bson.types.ObjectId
 import java.util.UUID
 
 data class ClanEntity(
-    @BsonId val id: ObjectId = ObjectId(),
+    @BsonId val _id: ObjectId = ObjectId(),
     val name: String,
     val tag: String?,
     val members: MutableList<UUID> = mutableListOf(),

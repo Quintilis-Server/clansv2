@@ -3,6 +3,7 @@ package org.quintilis.clansv2
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.quintilis.clansv2.commands.clan.ClanCommand
+import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.MongoManager
 
 class Clansv2 : JavaPlugin() {
@@ -21,6 +22,10 @@ class Clansv2 : JavaPlugin() {
             """.trimIndent()
         )
         MongoManager.connect(config.getString("database.mongodb.uri")!!)
+        InviteManager.setConfig(
+            this.config.getInt("invite.ally.expiration"),
+            this.config.getInt("invite.player.expiration")
+        )
         this.getCommand("clan")?.setExecutor(ClanCommand(MongoManager.clanCollection, MongoManager.playerCollection))
     }
     
