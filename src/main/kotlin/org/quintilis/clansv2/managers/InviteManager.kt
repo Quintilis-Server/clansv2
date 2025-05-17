@@ -48,7 +48,7 @@ object InviteManager {
     
     fun addAllyInvite(receiver: ClanEntity, sender: ClanEntity) {
         val invite = AllyInvite(sender._id, receiver._id)
-        val receiverOwner = Bukkit.getPlayer(receiver.owner)
+        val receiverOwner = Bukkit.getPlayer(PlayerManager.getUUID(receiver.owner))
         alliesInvites.add(invite)
         receiverOwner?.sendMessage("O clã ${sender.name} quer se aliar com você. use: \"/ally accept ${sender.name}\" para aceitar.")
     }
@@ -73,10 +73,10 @@ object InviteManager {
 //        clanCollection.findOneAndUpdate(eq("id", invite.receiver), push("allies", invite.sender))
         
         for(member in clanSender!!.members) {
-            Bukkit.getPlayer(member)?.sendMessage("O seu clã se aliou ${clanReceiver!!.name}.")
+            Bukkit.getPlayer(PlayerManager.getPlayerById(member)?.mineId!!)?.sendMessage("O seu clã se aliou ${clanReceiver!!.name}.")
         }
         for(member in clanReceiver!!.members) {
-            Bukkit.getPlayer(member)?.sendMessage("O seu clã se aliou ${clanSender.name}.")
+            Bukkit.getPlayer(PlayerManager.getPlayerById(member)?.mineId!!)?.sendMessage("O seu clã se aliou ${clanSender.name}.")
         }
         
         alliesInvites.removeIf { it.sender == invite.sender && it.receiver == invite.receiver }
@@ -84,7 +84,7 @@ object InviteManager {
     
     fun rejectAllyInvite(invite: AllyInvite) {
         val clanSender = ClanManager.getClanById(invite.sender)
-        Bukkit.getPlayer(clanSender!!.owner)?.sendMessage("A sua solicitação de aliação foi recusada.")
+        Bukkit.getPlayer(PlayerManager.getUUID(clanSender!!.owner))?.sendMessage("A sua solicitação de aliação foi recusada.")
         alliesInvites.removeIf { it.sender == invite.sender && it.receiver == invite.receiver }
     }
     

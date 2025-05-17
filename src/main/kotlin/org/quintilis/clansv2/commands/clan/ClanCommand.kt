@@ -14,6 +14,7 @@ import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.entities.PlayerEntity
 import org.quintilis.clansv2.managers.ClanManager
+import org.quintilis.clansv2.managers.PlayerManager
 
 class ClanCommand(
     private val clanColllection: MongoCollection<ClanEntity>,
@@ -28,13 +29,13 @@ class ClanCommand(
         }
         when(p3[0]){
             ClanCommands.CREATE.command -> create(p0, p3.sliceArray(1 until p3.size))
-            ClanCommands.DELETE.command -> delete(p0, p3.sliceArray(1 until p3.size))
+            ClanCommands.DELETE.command -> delete(p0)
             ClanCommands.LIST.command -> list(p0)
         }
         return true
     }
     
-    override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<out String?>): List<String?>? {
+    override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<String?>): List<String?>? {
         if(p3.size == 1) {
             return ClanCommands.entries.map { it.command }
         }else {
@@ -44,19 +45,25 @@ class ClanCommand(
     }
     
     
-    fun create(commandSender: CommandSender, args: Array<out String>) {
-        val name: String = args[0]
+    fun create(commandSender: CommandSender, args: Array<String>) {
+        val name: String = args.get(0)
         if(name.isEmpty()) {
             commandSender.sendMessage("Nome do clã esta vazio, uso /clan create <nome do clã> <tag>")
             return
         }
-        val tag: String? = args[1]
-        val clan = ClanEntity(name = name, tag = tag, owner = (commandSender as Player).uniqueId)
+        val tag: String? = args.getOrNull(1)
+        val player = commandSender as Player
+        val playerEntity = PlayerManager.getPlayerByMineId(player.uniqueId)
+        if (playerEntity == null) {
+            commandSender.sendMessage("Erro: jogador não encontrado no banco de dados.")
+            return
+        }
+        val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender as Player).uniqueId)?._id!!)
         ClanManager.create(clan)
         commandSender.sendMessage("Clã ${clan.name} criado com sucesso!")
     }
     
-    fun delete(commandSender: CommandSender, args: Array<out String>){
+    fun delete(commandSender: CommandSender){
         val clan: FindIterable<ClanEntity?> = clanColllection.find(eq("owner", (commandSender as Player).uniqueId))
         if(clan.first() == null) {
             commandSender.sendMessage("Você não é dono de nenhum clã!")
@@ -69,7 +76,8 @@ class ClanCommand(
     fun list(commandSender: CommandSender){
         var out = "";
         ClanManager.listClans().forEach {
-            out += it.toString() + "\n"
+            println(it)
+            out += "Nome:${it.name}, Tag: ${it.tag}, Dono: ${PlayerManager.getPlayerById(it.owner)!!.name} \n"
         }
         commandSender.sendMessage(out)
     }

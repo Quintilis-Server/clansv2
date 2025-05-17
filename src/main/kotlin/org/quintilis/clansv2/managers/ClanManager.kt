@@ -62,7 +62,7 @@ object ClanManager {
     
     fun sendMessageToMembers(clan: ClanEntity, message: String) {
         clan.members.forEach {
-            Bukkit.getPlayer(it)?.sendMessage(message)
+            Bukkit.getPlayer(PlayerManager.getPlayerById(it)?.mineId!!)?.sendMessage(message)
         }
     }
     

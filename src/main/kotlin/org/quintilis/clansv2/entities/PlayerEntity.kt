@@ -4,9 +4,9 @@ import org.bson.types.ObjectId
 import java.util.UUID
 
 data class PlayerEntity(
-    val _id: ObjectId? = ObjectId(),
-    val mineId: UUID,
-    val name: String,
-    val points: Int = 0,
-    val clanId: ObjectId? = null
+    var _id: ObjectId? = ObjectId(),
+    var mineId: UUID = UUID.randomUUID(),
+    var name: String = "",
+    var points: Int = 0,
+    var clanId: ObjectId? = null
 )
