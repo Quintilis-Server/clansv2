@@ -8,6 +8,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.entities.PlayerEntity
+import java.util.UUID
 
 object ClanManager {
     private val clan: MongoCollection<ClanEntity> = MongoManager.clanCollection;
@@ -50,6 +51,10 @@ object ClanManager {
         return this.clan.find(eq("name", clanName)).first() != null;
     }
     
+    fun isOwner(player: Player): Boolean {
+        return this.clan.find(eq("owner", player.uniqueId)).first() != null;
+    }
+    
     fun isOwner(player: Player, clanId: ObjectId): Boolean {
         val clan = this.getClanById(clanId)
         return player.uniqueId == clan?.owner
@@ -57,18 +62,29 @@ object ClanManager {
     
     fun sendMessageToMembers(clan: ClanEntity, message: String) {
         clan.members.forEach {
-            Bukkit.getPlayer(it)?.sendMessage(message)
+            Bukkit.getPlayer(PlayerManager.getPlayerById(it)?.mineId!!)?.sendMessage(message)
         }
     }
     
     fun addAlly(clan: ClanEntity, ally: ClanEntity) {
         this.clan.updateOne(
             eq("_id", clan._id),
-            set("allies", ally._id)
+            push("allies", ally._id)
         )
         this.clan.updateOne(
             eq("_id", ally._id),
-            set("allies", clan._id)
+            push("allies", clan._id)
+        )
+    }
+    
+    fun addEnemy(clan: ClanEntity, enemy: ClanEntity){
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            push("enemies", enemy._id)
+        )
+        this.clan.updateOne(
+            eq("_id", enemy._id),
+            push("enemies", clan._id)
         )
     }
     

@@ -20,6 +20,14 @@ object CommandException {
         )
         return true
     }
+    fun notClanLeader(commandSender: CommandSender): Boolean {
+        commandSender.sendMessage(ChatColor.RED.toString() + "Você tem que ser o líder do clã para fazer isso!")
+        return true
+    }
     
+    fun notEnoughArgs(commandSender: CommandSender, args: Array<out String>, min: Int): Boolean {
+        commandSender.sendMessage(ChatColor.RED.toString() + "Argumentos insuficientes. Necessário $min, fornecido ${args.size}")
+        return true
+    }
     
 }
