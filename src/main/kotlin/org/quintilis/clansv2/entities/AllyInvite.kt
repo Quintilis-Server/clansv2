@@ -4,7 +4,7 @@ import org.bson.types.ObjectId
 
 data class AllyInvite(
     //Clan id
-    val sender: ObjectId,
+    val sender: ObjectId?,
     //Clan id
-    val receiver: ObjectId,
+    val receiver: ObjectId?,
 )

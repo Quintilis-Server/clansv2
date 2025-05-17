@@ -1,7 +1,5 @@
 package org.quintilis.clansv2.managers
 
-import com.mongodb.client.model.Filters.*
-import com.mongodb.client.model.Updates.*
 import org.bson.types.ObjectId
 import org.bukkit.Bukkit
 import org.quintilis.clansv2.entities.AllyInvite
@@ -57,15 +55,15 @@ object InviteManager {
         return alliesInvites.filter { it.receiver == receiver }
     }
     
-    fun getAllyInvitesBySender(sender: ObjectId): AllyInvite? {
+    fun getAllyInvitesBySender(sender: ObjectId?): AllyInvite? {
         return alliesInvites.find { it.sender == sender }
     }
     
     
     fun acceptAllyInvite(invite: AllyInvite) {
         
-        val clanSender = ClanManager.getClanById(invite.sender)
-        val clanReceiver = ClanManager.getClanById(invite.receiver)
+        val clanSender = ClanManager.getClanById(invite.sender!!)
+        val clanReceiver = ClanManager.getClanById(invite.receiver!!)
         
         ClanManager.addAlly(clanSender!!, clanReceiver!!)
         
@@ -83,7 +81,7 @@ object InviteManager {
     }
     
     fun rejectAllyInvite(invite: AllyInvite) {
-        val clanSender = ClanManager.getClanById(invite.sender)
+        val clanSender = ClanManager.getClanById(invite.sender!!)
         Bukkit.getPlayer(PlayerManager.getUUID(clanSender!!.owner))?.sendMessage("A sua solicitação de aliação foi recusada.")
         alliesInvites.removeIf { it.sender == invite.sender && it.receiver == invite.receiver }
     }

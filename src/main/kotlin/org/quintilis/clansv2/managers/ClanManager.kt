@@ -15,8 +15,9 @@ object ClanManager {
     private val player: MongoCollection<PlayerEntity> = MongoManager.playerCollection;
     private val invites: InviteManager = InviteManager
     
-    fun create(clan: ClanEntity) {
-        clan.members.add(clan.owner)
+    fun create(clan: ClanEntity, owner: Player) {
+        clan.members.add(clan.owner!!)
+        PlayerManager.setClan(owner.uniqueId, clan)
         this.clan.insertOne(clan)
     }
     

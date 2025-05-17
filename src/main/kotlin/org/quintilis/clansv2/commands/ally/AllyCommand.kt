@@ -2,7 +2,6 @@ package org.quintilis.clansv2.commands.ally
 
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.eq
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -41,7 +40,7 @@ class AllyCommand(
             commandSender.sendMessage("Você não é dono de nenhum clã!")
             return
         }
-        InviteManager.getAllyInvitesByReceiver(clan._id).forEach {
+        InviteManager.getAllyInvitesByReceiver(clan._id!!).forEach {
             out += "${ChatColor.YELLOW}${it.sender} ${ChatColor.GRAY}solicitou uma aliança com o clã ${ChatColor.YELLOW}${clanCollection.find(eq(it.sender)).first()?.name}" + "\n"
         }
         commandSender.sendMessage(out)
@@ -104,7 +103,7 @@ class AllyCommand(
     
     private fun listAllyInvites(player: Player): List<String> {
         val receiverClan = clanCollection.find(eq("owner",player.uniqueId)).first()
-        val invites = InviteManager.getAllyInvitesByReceiver(receiverClan._id)
+        val invites = InviteManager.getAllyInvitesByReceiver(receiverClan._id!!)
         return invites.map {
             clanCollection.find(eq(it.sender)).first()!!.name
         }

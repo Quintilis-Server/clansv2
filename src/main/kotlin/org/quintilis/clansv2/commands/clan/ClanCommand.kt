@@ -4,6 +4,7 @@ import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.Updates.set
+import org.bson.types.ObjectId
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -52,14 +53,16 @@ class ClanCommand(
             return
         }
         val tag: String? = args.getOrNull(1)
+        println("$name $tag")
         val player = commandSender as Player
         val playerEntity = PlayerManager.getPlayerByMineId(player.uniqueId)
+        println("$playerEntity")
         if (playerEntity == null) {
             commandSender.sendMessage("Erro: jogador não encontrado no banco de dados.")
             return
         }
-        val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender as Player).uniqueId)?._id!!)
-        ClanManager.create(clan)
+        val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender).uniqueId)?._id, _id = ObjectId())
+        ClanManager.create(clan,commandSender)
         commandSender.sendMessage("Clã ${clan.name} criado com sucesso!")
     }
     
@@ -77,7 +80,7 @@ class ClanCommand(
         var out = "";
         ClanManager.listClans().forEach {
             println(it)
-            out += "Nome:${it.name}, Tag: ${it.tag}, Dono: ${PlayerManager.getPlayerById(it.owner)!!.name} \n"
+            out += "Nome:${it.name}, Tag: ${it.tag?:""}, Dono: ${PlayerManager.getPlayerById(it.owner!!)!!.name} \n"
         }
         commandSender.sendMessage(out)
     }
