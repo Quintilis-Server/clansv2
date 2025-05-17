@@ -6,3 +6,8 @@ invites:
     expiration: 2
   player:
     expiration: 1
+
+points:
+  noEnemy: 5
+  enemy: 10
+  ally: 0

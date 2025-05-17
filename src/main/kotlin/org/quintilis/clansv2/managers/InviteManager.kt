@@ -13,9 +13,6 @@ object InviteManager {
     private val playerInvites = mutableListOf<Invite>()
     private val alliesInvites = mutableListOf<AllyInvite>()
     
-    private val clanCollection = MongoManager.clanCollection
-    private val playerCollection = MongoManager.playerCollection
-    
     private var allyExpirationHours: Int = 2;
     private var playerExpirationHours: Int = 1;
     
@@ -70,9 +67,10 @@ object InviteManager {
         val clanSender = ClanManager.getClanById(invite.sender)
         val clanReceiver = ClanManager.getClanById(invite.receiver)
         
+        ClanManager.addAlly(clanSender!!, clanReceiver!!)
         
-        clanCollection.findOneAndUpdate(eq("id", invite.sender), push("allies", invite.receiver))
-        clanCollection.findOneAndUpdate(eq("id", invite.receiver), push("allies", invite.sender))
+//        clanCollection.findOneAndUpdate(eq("id", invite.sender), push("allies", invite.receiver))
+//        clanCollection.findOneAndUpdate(eq("id", invite.receiver), push("allies", invite.sender))
         
         for(member in clanSender!!.members) {
             Bukkit.getPlayer(member)?.sendMessage("O seu clã se aliou ${clanReceiver!!.name}.")
