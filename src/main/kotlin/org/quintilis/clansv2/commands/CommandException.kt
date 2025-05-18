@@ -13,7 +13,7 @@ object CommandException {
     fun sendAllUsage(commandSender: CommandSender, commands: Array<out String>): Boolean {
         var out: String = "";
         for(command in commands) {
-            out += "/$command "
+            out += "$command "
         }
         commandSender.sendMessage(
             "Usage: " + ChatColor.YELLOW + out

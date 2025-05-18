@@ -45,7 +45,8 @@ object ClanManager {
     }
     
     fun getClanByOwner(owner: Player): ClanEntity? {
-        return this.clan.find(eq("owner", owner.uniqueId)).first()
+        val player = PlayerManager.getPlayerByMineId(owner.uniqueId)!!
+        return this.clan.find(eq("owner", player._id)).first()
     }
     
     fun exists(clanName: String): Boolean {
@@ -89,4 +90,18 @@ object ClanManager {
         )
     }
     
+    
+    fun setName(name: String, clan: ClanEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            set("name", name)
+        )
+    }
+    
+    fun setTag(tag: String,clan: ClanEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            set("tag", tag)
+        )
+    }
 }

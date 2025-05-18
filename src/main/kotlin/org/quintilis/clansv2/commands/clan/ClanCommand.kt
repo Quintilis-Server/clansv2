@@ -6,6 +6,7 @@ import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.Updates.set
 import org.bson.types.ObjectId
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -32,47 +33,76 @@ class ClanCommand(
             ClanCommands.CREATE.command -> create(p0, p3.sliceArray(1 until p3.size))
             ClanCommands.DELETE.command -> delete(p0)
             ClanCommands.LIST.command -> list(p0)
+            ClanCommands.SET.command -> set(p0, p3.sliceArray(1 until p3.size))
         }
         return true
     }
     
     override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<String?>): List<String?>? {
-        if(p3.size == 1) {
-            return ClanCommands.entries.map { it.command }
-        }else {
-            return listOf()
+        return when(p3.size){
+            1->{
+                ClanCommands.entries.map { it.command }
+            }
+            2->{
+                if (p3[0].equals(ClanCommands.SET.command, ignoreCase = true)) {
+                    ClanSetSubCommands.entries.map { it.command }
+                } else {
+                    emptyList()
+                }
+            }
+            else -> emptyList()
         }
+//        if(p3.size == 1) {
+//            return ClanCommands.entries.map { it.command }
+//        }else {
+//            println("${p3.map { "$it" }} ${p3.size} ${p3.getOrNull(1)}")
+//            if(p3.size == 3 && p3.getOrNull(1) == ClanCommands.SET.command){
+//                return ClanSetSubCommands.entries.map { it.command }
+//            }
+//            return listOf()
+//        }
 //        return null
     }
     
     
     fun create(commandSender: CommandSender, args: Array<String>) {
         val name: String = args.get(0)
+        
         if(name.isEmpty()) {
             commandSender.sendMessage("Nome do clã esta vazio, uso /clan create <nome do clã> <tag>")
             return
         }
+        
         val tag: String? = args.getOrNull(1)
-        println("$name $tag")
+        
         val player = commandSender as Player
         val playerEntity = PlayerManager.getPlayerByMineId(player.uniqueId)
+        
         println("$playerEntity")
+        
         if (playerEntity == null) {
             commandSender.sendMessage("Erro: jogador não encontrado no banco de dados.")
             return
         }
+        
+        if(playerEntity.clanId != null){
+            return commandSender.sendMessage("Você ja esta em um clã.")
+        }
+        
         val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender).uniqueId)?._id, _id = ObjectId())
         ClanManager.create(clan,commandSender)
+        
         commandSender.sendMessage("Clã ${clan.name} criado com sucesso!")
     }
     
     fun delete(commandSender: CommandSender){
-        val clan: FindIterable<ClanEntity?> = clanColllection.find(eq("owner", (commandSender as Player).uniqueId))
-        if(clan.first() == null) {
+//        val clan = clanColllection.find(eq("owner", (commandSender as Player).uniqueId))
+        val clan = ClanManager.getClanByOwner(commandSender as Player)
+        if(clan== null) {
             commandSender.sendMessage("Você não é dono de nenhum clã!")
             return
         }
-        ClanManager.delete(clan.first()!!)
+        ClanManager.delete(clan)
         commandSender.sendMessage("Clã deletado com sucesso!")
     }
     
@@ -80,9 +110,33 @@ class ClanCommand(
         var out = "";
         ClanManager.listClans().forEach {
             println(it)
-            out += "Nome:${it.name}, Tag: ${it.tag?:""}, Dono: ${PlayerManager.getPlayerById(it.owner!!)!!.name} \n"
+            out += "${ChatColor.YELLOW}Nome: ${ChatColor.RESET}${it.name}, " +
+                    "${ChatColor.YELLOW}Tag: ${ChatColor.RESET}${it.tag?:""}, " +
+                    "${ChatColor.YELLOW}Dono: ${ChatColor.RESET}${PlayerManager.getPlayerById(it.owner!!)!!.name}, " +
+                    "${ChatColor.YELLOW}Pontos: ${ChatColor.RESET}${it.points}" +
+                    "\n"
         }
         commandSender.sendMessage(out)
     }
     
+    fun set(commandSender: CommandSender, args: Array<String>){
+        val clan = ClanManager.getClanByOwner(commandSender as Player)
+        if(clan == null) {
+            CommandException.notClanLeader(commandSender)
+            return
+        }
+        
+        val setValue = args.getOrNull(1)
+        println("${args.map { "$it " }}")
+        if(setValue == null) {
+            CommandException.sendAllUsage(commandSender, ClanSetSubCommands.entries.map { it.usage }.toTypedArray())
+            return
+        }
+        
+        when(args.getOrNull(0)){
+            ClanSetSubCommands.NAME.command -> ClanManager.setName(setValue, clan)
+            ClanSetSubCommands.TAG.command -> ClanManager.setTag(setValue, clan)
+        }
+        commandSender.sendMessage("Valor ${args.getOrNull(0)} alterado para: $setValue")
+    }
 }
