@@ -18,10 +18,7 @@ import org.quintilis.clansv2.entities.PlayerEntity
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.PlayerManager
 
-class ClanCommand(
-    private val clanColllection: MongoCollection<ClanEntity>,
-    private val playerCollection: MongoCollection<PlayerEntity>
-): CommandExecutor, TabExecutor {
+class ClanCommand: CommandExecutor, TabExecutor {
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<String>): Boolean {
         if(p0 !is Player) {
             return CommandException.notPlayer(p0)
@@ -127,7 +124,6 @@ class ClanCommand(
         }
         
         val setValue = args.getOrNull(1)
-        println("${args.map { "$it " }}")
         if(setValue == null) {
             CommandException.sendAllUsage(commandSender, ClanSetSubCommands.entries.map { it.usage }.toTypedArray())
             return

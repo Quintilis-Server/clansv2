@@ -10,13 +10,13 @@ object CommandException {
         commandSender.sendMessage(ChatColor.RED.toString() + "You must be a player!")
         return true
     }
-    fun sendAllUsage(commandSender: CommandSender, commands: Array<out String>): Boolean {
+    fun sendAllUsage(commandSender: CommandSender, commands: Array<String>): Boolean {
         var out: String = "";
         for(command in commands) {
-            out += "$command "
+            out += "$command \n"
         }
         commandSender.sendMessage(
-            "Usage: " + ChatColor.YELLOW + out
+            "Uso: " + ChatColor.YELLOW + out
         )
         return true
     }

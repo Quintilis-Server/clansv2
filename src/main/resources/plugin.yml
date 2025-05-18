@@ -4,5 +4,8 @@ main: org.quintilis.clansv2.Clansv2
 api-version: '1.21'
 commands:
   clan:
-    description: "Comando principal de clã"
+    description: "Comando principal de clã, para ver os usos é so escrever /clan"
     usage: /clan
+  ally:
+    description: "Commando para alianças entre clãs, para ver os usos é so escrever /ally"
+    usage: /ally

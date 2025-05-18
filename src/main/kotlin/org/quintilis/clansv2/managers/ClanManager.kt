@@ -48,6 +48,9 @@ object ClanManager {
         val player = PlayerManager.getPlayerByMineId(owner.uniqueId)!!
         return this.clan.find(eq("owner", player._id)).first()
     }
+    fun getAllClans(): List<ClanEntity> {
+        return this.clan.find().toList()
+    }
     
     fun exists(clanName: String): Boolean {
         return this.clan.find(eq("name", clanName)).first() != null;
