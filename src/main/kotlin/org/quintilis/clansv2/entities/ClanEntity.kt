@@ -14,7 +14,7 @@ data class ClanEntity @BsonCreator constructor(
     @param:BsonProperty("points") val points: Int = 0,
     @param:BsonProperty("allies") val allies: MutableList<ObjectId> = mutableListOf(),
     @param:BsonProperty("enemies") val enemies: MutableList<ObjectId> = mutableListOf(),
-    @param:BsonProperty("owner") val owner: ObjectId? = null,
+    @param:BsonProperty("owner") val owner: ObjectId,
 ){
     override fun toString(): String{
         return "Name: $name, Tag: $tag, Owner: $owner, Enemies: $enemies, allies: $allies, points: $points"

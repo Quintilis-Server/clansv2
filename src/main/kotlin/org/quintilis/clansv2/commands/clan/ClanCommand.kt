@@ -86,7 +86,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
             return commandSender.sendMessage("Você ja esta em um clã.")
         }
         
-        val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender).uniqueId)?._id, _id = ObjectId())
+        val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender).uniqueId)!!._id, _id = ObjectId())
         ClanManager.create(clan,commandSender)
         
         commandSender.sendMessage("Clã ${clan.name} criado com sucesso!")

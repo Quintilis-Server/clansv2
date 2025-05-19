@@ -12,6 +12,7 @@ import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.InviteManager
+import org.quintilis.clansv2.managers.PlayerManager
 
 class AllyCommand: CommandExecutor, TabCompleter {
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<String>): Boolean {
@@ -25,15 +26,20 @@ class AllyCommand: CommandExecutor, TabCompleter {
         
         when(p3[0]){
             AllyCommands.LIST.command -> list(commandSender = p0, args = p3.sliceArray(1 until p3.size))
-            AllyCommands.ACCEPT.command -> accept(commandSender = p0, args = p3.sliceArray(1 until p3.size))
-            AllyCommands.REJECT.command -> reject(commandSender = p0, args = p3.sliceArray(1 until p3.size))
-            AllyCommands.SEND.command -> send(commandSender = p0, args = p3.sliceArray(1 until p3.size))
+            AllyCommands.INVITE.command ->{
+                when(p3[1]){
+                    AllyInviteSubCommands.ACCEPT.command -> accept(commandSender = p0, args = p3.sliceArray(2 until p3.size))
+                    AllyInviteSubCommands.REJECT.command -> reject(commandSender = p0, args = p3.sliceArray(2 until p3.size))
+                    AllyInviteSubCommands.SEND.command -> send(commandSender = p0, args = p3.sliceArray(2 until p3.size))
+                }
+            }
+            AllyCommands.REMOVE.command -> remove(commandSender = p0, args = p3)
         }
         return true
     }
     
     
-    fun list(commandSender: CommandSender, args: Array<String>){
+    private fun list(commandSender: CommandSender, args: Array<String>){
         val clan = ClanManager.getClanByOwner(commandSender as Player)
         if(clan == null) {
             CommandException.notClanLeader(commandSender)
@@ -50,7 +56,6 @@ class AllyCommand: CommandExecutor, TabCompleter {
             AllyListSubCommands.INVITES.command -> InviteManager.getAllyInvitesByReceiver(clan._id).map {
                 "${ChatColor.YELLOW}${ClanManager.getClanById(it.sender!!)!!.name} ${ChatColor.GRAY}solicitou uma aliança com o clã ${ChatColor.YELLOW}${ClanManager.getClanById(it.sender!!)!!.name}"
             }
-            
             else -> {
                 CommandException.sendAllUsage(commandSender, AllyListSubCommands.entries.map { it.usage }.toTypedArray())
                 return
@@ -69,7 +74,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
         commandSender.sendMessage(list.joinToString("\n"))
     }
     
-    fun accept(commandSender: CommandSender, args: Array<String>) {
+    private fun accept(commandSender: CommandSender, args: Array<String>) {
         val clanId = ClanManager.getClanByName(args[0])!!._id
         val invite = InviteManager.getAllyInvitesBySender(clanId)
         if(invite == null) {
@@ -79,7 +84,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
         commandSender.sendMessage("Convite aceito")
     }
     
-    fun reject(commandSender: CommandSender, args: Array<String>) {
+    private fun reject(commandSender: CommandSender, args: Array<String>) {
         val clanId = ClanManager.getClanByName(args[0])!!._id
         val invite = InviteManager.getAllyInvitesBySender(clanId)
         if(invite == null) {
@@ -89,7 +94,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
         commandSender.sendMessage("Convite recusado")
     }
     
-    fun send(commandSender: CommandSender, args: Array<String>) {
+    private fun send(commandSender: CommandSender, args: Array<String>) {
         val senderClan = ClanManager.getClanByOwner(commandSender as Player)
         if(senderClan == null) {
             CommandException.notClanLeader(commandSender)
@@ -110,15 +115,41 @@ class AllyCommand: CommandExecutor, TabCompleter {
         commandSender.sendMessage("Convite para clã ${receiverClan.name} enviado")
     }
     
+    private fun remove(commandSender: CommandSender, args: Array<String>) {
+        val clan = ClanManager.getClanByOwner(commandSender as Player)
+        if(clan == null) {
+            CommandException.notClanLeader(commandSender)
+            return
+        }
+        
+        val receiverClan = ClanManager.getClanByName(args[0])
+        if(receiverClan == null) {
+            CommandException.notFound(commandSender, "clã")
+            return
+        }
+        
+        commandSender.sendMessage("Sua aliança com o clã ${ChatColor.YELLOW}${receiverClan.name}${ChatColor.RESET} acabou")
+        commandSender.sendMessage("Sua aliança com o clã ${ChatColor.YELLOW}${clan.name}${ChatColor.RESET} acabou por conta do ${PlayerManager.getPlayerById(clan.owner)?.name}")
+        
+        ClanManager.removeAlly(clan,receiverClan)
+    }
     
     override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<out String?>): List<String?>? {
         return when (p3.size) {
             1 -> AllyCommands.entries.map { it.command }
             2 -> when (p3[0]?.lowercase()) {
-                AllyCommands.ACCEPT.command -> listAllyInvites(p0 as Player)
-                AllyCommands.REJECT.command -> listAllyInvites(p0 as Player)
-                AllyCommands.SEND.command -> listAllClans(p0 as Player)
+//                AllyCommands.ACCEPT.command -> listAllyInvites(p0 as Player)
+//                AllyCommands.REJECT.command -> listAllyInvites(p0 as Player)
+//                AllyCommands.SEND.command -> listAllClans(p0 as Player)
+                AllyCommands.INVITE.command -> AllyInviteSubCommands.entries.map { it.command }
                 AllyCommands.LIST.command -> AllyListSubCommands.entries.map { it.command }
+                AllyCommands.REMOVE.command -> listAllAllies(p0 as Player)
+                else -> emptyList()
+            }
+            3 -> when(p3[1]?.lowercase()){
+                AllyInviteSubCommands.ACCEPT.command -> listAllyInvites(p0 as Player)
+                AllyInviteSubCommands.REJECT.command -> listAllyInvites(p0 as Player)
+                AllyInviteSubCommands.SEND.command -> listAllClans(p0 as Player)
                 else -> emptyList()
             }
             else -> emptyList()

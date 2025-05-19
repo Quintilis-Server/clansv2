@@ -30,4 +30,9 @@ object CommandException {
         return true
     }
     
+    fun notFound(commandSender: CommandSender, type:String): Boolean{
+        commandSender.sendMessage(ChatColor.RED.toString()+"O $type não foi encontrado.")
+        return true
+    }
+    
 }

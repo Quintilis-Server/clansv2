@@ -93,6 +93,17 @@ object ClanManager {
         )
     }
     
+    fun removeAlly(clan: ClanEntity, ally: ClanEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            pull("allies", ally._id)
+        )
+        this.clan.updateOne(
+            eq("_id", ally._id),
+            push("allies", clan._id)
+        )
+    }
+    
     
     fun setName(name: String, clan: ClanEntity) {
         this.clan.updateOne(
