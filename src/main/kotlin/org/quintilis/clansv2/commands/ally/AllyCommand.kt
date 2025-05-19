@@ -2,6 +2,7 @@ package org.quintilis.clansv2.commands.ally
 
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.eq
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -26,6 +27,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
         
         when(p3[0]){
             AllyCommands.LIST.command -> list(commandSender = p0, args = p3.sliceArray(1 until p3.size))
+            AllyCommands.REMOVE.command -> remove(commandSender = p0, args = p3.sliceArray(1 until p3.size))
             AllyCommands.INVITE.command ->{
                 when(p3[1]){
                     AllyInviteSubCommands.ACCEPT.command -> accept(commandSender = p0, args = p3.sliceArray(2 until p3.size))
@@ -33,7 +35,6 @@ class AllyCommand: CommandExecutor, TabCompleter {
                     AllyInviteSubCommands.SEND.command -> send(commandSender = p0, args = p3.sliceArray(2 until p3.size))
                 }
             }
-            AllyCommands.REMOVE.command -> remove(commandSender = p0, args = p3)
         }
         return true
     }
@@ -105,6 +106,10 @@ class AllyCommand: CommandExecutor, TabCompleter {
             return commandSender.sendMessage("Clã não encontrada")
         }
         
+        if(senderClan.allies.find { it == receiverClan._id } != null || receiverClan.allies.find { it == senderClan._id } != null) {
+            return commandSender.sendMessage("Os clãs ja são aliados")
+        }
+        
         val invite = InviteManager.getAllyInvitesBySender(receiverClan._id)
         if(invite != null) {
             return commandSender.sendMessage("Você já enviou um convite para esta clã")
@@ -126,9 +131,10 @@ class AllyCommand: CommandExecutor, TabCompleter {
             CommandException.notFound(commandSender, "clã")
             return
         }
+        val receiverPlayer = Bukkit.getPlayer(PlayerManager.getPlayerById(receiverClan.owner)!!.mineId)!!
         
         commandSender.sendMessage("Sua aliança com o clã ${ChatColor.YELLOW}${receiverClan.name}${ChatColor.RESET} acabou")
-        commandSender.sendMessage("Sua aliança com o clã ${ChatColor.YELLOW}${clan.name}${ChatColor.RESET} acabou por conta do ${PlayerManager.getPlayerById(clan.owner)?.name}")
+        receiverPlayer.sendMessage("Sua aliança com o clã ${ChatColor.YELLOW}${clan.name}${ChatColor.RESET} acabou por conta do ${PlayerManager.getPlayerById(clan.owner)?.name}")
         
         ClanManager.removeAlly(clan,receiverClan)
     }
