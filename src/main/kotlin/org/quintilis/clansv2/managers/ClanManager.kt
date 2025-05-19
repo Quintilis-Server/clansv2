@@ -8,7 +8,6 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.entities.PlayerEntity
-import java.util.UUID
 
 object ClanManager {
     private val clan: MongoCollection<ClanEntity> = MongoManager.clanCollection;
@@ -57,7 +56,8 @@ object ClanManager {
     }
     
     fun isOwner(player: Player): Boolean {
-        return this.clan.find(eq("owner", player.uniqueId)).first() != null;
+        val playerEntity = PlayerManager.getPlayerByMineId(player.uniqueId)!!
+        return this.clan.find(eq("owner", playerEntity._id)).first() != null;
     }
     
     fun isOwner(player: Player, clanId: ObjectId): Boolean {

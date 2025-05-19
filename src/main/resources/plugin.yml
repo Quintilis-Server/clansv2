@@ -7,5 +7,11 @@ commands:
     description: "Comando principal de clã, para ver os usos é so escrever /clan"
     usage: /clan
   ally:
-    description: "Commando para alianças entre clãs, para ver os usos é so escrever /ally"
+    description: "Comando para alianças entre clãs, para ver os usos é so escrever /ally"
     usage: /ally
+  enemy:
+    description: "Comando para inimigos §4MORTAIS§f, para ver os usos é so escrever /enemy"
+    usage: /enemy
+  war:
+    description: "Comando para §4DECLARAR GUERRA§f, para ver os usos é so escrever /war"
+    usage: /war

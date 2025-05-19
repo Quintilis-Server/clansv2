@@ -1,12 +1,12 @@
 package org.quintilis.clansv2.commands.war;
 
-public enum WarCommandEnum {
+public enum WarCommandsEnum {
     DECLARE("declare", "/war declare <clan>"),;
 
     private final String command;
     private final String usage;
 
-    private WarCommandEnum(String command, String usage) {
+    private WarCommandsEnum(String command, String usage) {
         this.command = command;
         this.usage = usage;
     }

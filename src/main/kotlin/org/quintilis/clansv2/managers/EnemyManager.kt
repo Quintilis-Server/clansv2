@@ -1,16 +1,14 @@
 package org.quintilis.clansv2.managers
 
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.model.Filters
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.entities.ClanEntity
-import java.util.UUID
 
 object EnemyManager {
     fun list(playerOwner: Player): List<ClanEntity> {
         val clanOwner = ClanManager.getClanByOwner(playerOwner)
+        println(clanOwner)
         val enemies: List<ClanEntity> = clanOwner!!.enemies.mapNotNull {
             ClanManager.getClanById(it)
         }
@@ -27,8 +25,7 @@ object EnemyManager {
         }
     }
     
-    fun remove(receiver: ClanEntity, playerSender: Player) {
-        val clanSender = ClanManager.getClanByOwner(playerSender)!!
-        ClanManager.sendMessageToMembers(receiver, "${clanSender.name} fez as pazes")
+    fun remove(receiver: ClanEntity, sender: ClanEntity) {
+        ClanManager.sendMessageToMembers(receiver, "${sender.name} fez as pazes")
     }
 }

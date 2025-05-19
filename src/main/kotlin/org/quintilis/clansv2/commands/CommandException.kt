@@ -11,12 +11,12 @@ object CommandException {
         return true
     }
     fun sendAllUsage(commandSender: CommandSender, commands: Array<String>): Boolean {
-        var out: String = "";
+        var out = "";
         for(command in commands) {
-            out += "$command \n"
+            out += "${ChatColor.YELLOW}${ChatColor.BOLD}$command${ChatColor.RESET}, "
         }
         commandSender.sendMessage(
-            "Uso: " + ChatColor.YELLOW + out
+            "Uso: $out"
         )
         return true
     }

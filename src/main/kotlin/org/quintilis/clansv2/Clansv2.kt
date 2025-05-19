@@ -5,6 +5,8 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.quintilis.clansv2.commands.ally.AllyCommand
 import org.quintilis.clansv2.commands.clan.ClanCommand
 import org.quintilis.clansv2.commands.clan.ClanCommands
+import org.quintilis.clansv2.commands.enemy.EnemyCommand
+import org.quintilis.clansv2.commands.war.WarCommand
 import org.quintilis.clansv2.events.PlayerEventListener
 import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.MongoManager
@@ -32,8 +34,12 @@ class Clansv2 : JavaPlugin() {
         
         Bukkit.getPluginManager().registerEvents(PlayerEventListener(), this)
         
+        
+        //comandos
         this.getCommand("clan")?.setExecutor(ClanCommand())
         this.getCommand("ally")?.setExecutor(AllyCommand())
+        this.getCommand("enemy")?.setExecutor(EnemyCommand())
+        this.getCommand("war")?.setExecutor(WarCommand())
     }
     
     override fun onDisable() {
