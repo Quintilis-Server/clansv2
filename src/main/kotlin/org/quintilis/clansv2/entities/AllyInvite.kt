@@ -7,4 +7,8 @@ data class AllyInvite(
     val sender: ObjectId?,
     //Clan id
     val receiver: ObjectId?,
-)
+){
+    override fun toString(): String {
+        return "sender: $sender, receiver: $receiver"
+    }
+}

@@ -54,7 +54,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
                 "Clã: $it"
             }
             AllyListSubCommands.INVITES.command -> InviteManager.getAllyInvitesByReceiver(clan._id).map {
-                "${ChatColor.YELLOW}${ClanManager.getClanById(it.sender!!)!!.name} ${ChatColor.GRAY}solicitou uma aliança com o clã ${ChatColor.YELLOW}${ClanManager.getClanById(it.sender!!)!!.name}"
+                "${ChatColor.YELLOW}${ClanManager.getClanById(it.sender!!)!!.name} ${ChatColor.GRAY}solicitou uma aliança com o clã ${ChatColor.YELLOW}${ClanManager.getClanById(it.receiver!!)!!.name}"
             }
             else -> {
                 CommandException.sendAllUsage(commandSender, AllyListSubCommands.entries.map { it.usage }.toTypedArray())
@@ -100,7 +100,6 @@ class AllyCommand: CommandExecutor, TabCompleter {
             CommandException.notClanLeader(commandSender)
             return
         }
-//        println(args.joinToString(" "))
         val receiverClan = ClanManager.getClanByName(args[0])
         if(receiverClan == null) {
             return commandSender.sendMessage("Clã não encontrada")
