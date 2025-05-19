@@ -63,7 +63,11 @@ class ClanCommand: CommandExecutor, TabExecutor {
     
     
     fun create(commandSender: CommandSender, args: Array<String>) {
-        val name: String = args.get(0)
+        
+        if(args.isEmpty()) {
+            CommandException.sendAllUsage(commandSender, arrayOf(ClanCommands.CREATE.usage))
+            return
+        }
         
         if(name.isEmpty()) {
             commandSender.sendMessage("Nome do clã esta vazio, uso /clan create <nome do clã> <tag>")
