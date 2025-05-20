@@ -1,7 +1,5 @@
 package org.quintilis.clansv2.commands.ally
 
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.model.Filters.eq
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
@@ -62,20 +60,14 @@ class AllyCommand: CommandExecutor, TabCompleter {
                 return
             }
         }
-//                var out = "";
-//                val clan = ClanManager.getClanByOwner(commandSender as Player)
-//                if(clan == null) {
-//                    CommandException.notClanLeader(commandSender)
-//                    return
-//                }
-//                InviteManager.getAllyInvitesByReceiver(clan._id).forEach {
-//                    out += "${ChatColor.YELLOW}${ClanManager.getClanById(it.sender!!)!!.name} ${ChatColor.GRAY}solicitou uma aliança com o clã ${ChatColor.YELLOW}${ClanManager.getClanById(it.sender!!)!!.name}" + "\n"
-//                }
-//                return out
         commandSender.sendMessage(list.joinToString("\n"))
     }
     
     private fun accept(commandSender: CommandSender, args: Array<String>) {
+        if(args.isEmpty()) {
+            CommandException.sendAllUsage(commandSender, arrayOf(AllyInviteSubCommands.ACCEPT.usage))
+            return
+        }
         val clanId = ClanManager.getClanByName(args[0])!!._id
         val invite = InviteManager.getAllyInvitesBySender(clanId)
         if(invite == null) {
@@ -86,6 +78,10 @@ class AllyCommand: CommandExecutor, TabCompleter {
     }
     
     private fun reject(commandSender: CommandSender, args: Array<String>) {
+        if(args.isEmpty()) {
+            CommandException.sendAllUsage(commandSender, arrayOf(AllyInviteSubCommands.REJECT.usage))
+            return
+        }
         val clanId = ClanManager.getClanByName(args[0])!!._id
         val invite = InviteManager.getAllyInvitesBySender(clanId)
         if(invite == null) {
@@ -101,6 +97,12 @@ class AllyCommand: CommandExecutor, TabCompleter {
             CommandException.notClanLeader(commandSender)
             return
         }
+        
+        if(args.isEmpty()) {
+            CommandException.sendAllUsage(commandSender, arrayOf(AllyInviteSubCommands.SEND.usage))
+            return
+        }
+        
         val receiverClan = ClanManager.getClanByName(args[0])
         if(receiverClan == null) {
             return commandSender.sendMessage("Clã não encontrada")
@@ -123,6 +125,11 @@ class AllyCommand: CommandExecutor, TabCompleter {
         val clan = ClanManager.getClanByOwner(commandSender as Player)
         if(clan == null) {
             CommandException.notClanLeader(commandSender)
+            return
+        }
+        
+        if(args.isEmpty()) {
+            CommandException.sendAllUsage(commandSender, arrayOf(AllyCommands.REMOVE.usage))
             return
         }
         

@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.commands.CommandException
+import org.quintilis.clansv2.commands.enemy.EnemyCommands
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.EnemyManager
 
@@ -29,6 +30,11 @@ class WarCommand: CommandExecutor, TabCompleter {
     }
     
     private fun declare(commandSender: CommandSender, args: Array<String>) {
+        if(args.isEmpty()) {
+            CommandException.sendAllUsage(commandSender, arrayOf(WarCommandsEnum.DECLARE.usage))
+            return
+        }
+        
         val clan = ClanManager.getClanByName(args[0])
         if(clan == null) {
             CommandException.notFound(commandSender,"clã")

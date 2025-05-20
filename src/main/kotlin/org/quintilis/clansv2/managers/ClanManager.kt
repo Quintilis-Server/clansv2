@@ -27,7 +27,7 @@ object ClanManager {
                 set("clan", null)
             )
         }
-        sendMessageToMembers(clan, "O seu clã foi deletado.")
+        sendMessageToMembers(clan, "Clã esta sendo desfeito por ${PlayerManager.getPlayerById(clan.owner)?.name}")
         this.clan.deleteOne(eq("_id", clan._id))
     }
     

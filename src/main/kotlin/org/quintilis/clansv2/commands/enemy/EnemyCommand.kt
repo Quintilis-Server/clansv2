@@ -35,6 +35,11 @@ class EnemyCommand: CommandExecutor, TabCompleter {
     }
     
     private fun remove(commandSender: CommandSender, args: Array<out String>) {
+        if(args.isEmpty()) {
+            CommandException.sendAllUsage(commandSender, arrayOf(EnemyCommands.REMOVE.usage))
+            return
+        }
+        
         val clan = ClanManager.getClanByName(args[0])!!
         val clanSender = ClanManager.getClanByOwner(commandSender as Player)!!
         
