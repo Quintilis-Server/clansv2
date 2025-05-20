@@ -15,3 +15,6 @@ commands:
   war:
     description: "Comando para §4DECLARAR GUERRA§f, para ver os usos é so escrever /war"
     usage: /war
+  invite:
+    description: "Comando para aceitar ou rejeitar pedidos de junção a clãs, para ver os usos é só escrever /invite"
+    usage: /invite

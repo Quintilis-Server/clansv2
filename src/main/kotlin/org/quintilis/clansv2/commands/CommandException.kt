@@ -4,16 +4,18 @@ import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.commands.ally.AllyCommands
+import org.quintilis.clansv2.string.bold
+import org.quintilis.clansv2.string.color
 
 object CommandException {
     fun notPlayer(commandSender: CommandSender):Boolean {
-        commandSender.sendMessage(ChatColor.RED.toString() + "You must be a player!")
+        commandSender.sendMessage("You must be a player!".color(ChatColor.RED))
         return true
     }
     fun sendAllUsage(commandSender: CommandSender, commands: Array<String>): Boolean {
         var out = "";
         for(command in commands) {
-            out += "${ChatColor.YELLOW}${ChatColor.BOLD}$command${ChatColor.RESET}, "
+            out += "${command.color(ChatColor.YELLOW).bold()}, "
         }
         commandSender.sendMessage(
             "Uso: $out"
@@ -21,17 +23,17 @@ object CommandException {
         return true
     }
     fun notClanLeader(commandSender: CommandSender): Boolean {
-        commandSender.sendMessage(ChatColor.RED.toString() + "Você tem que ser o líder do clã para fazer isso!")
+        commandSender.sendMessage("Você tem que ser o líder do clã para fazer isso!".color(ChatColor.RED))
         return true
     }
     
     fun notEnoughArgs(commandSender: CommandSender, args: Array<out String>, min: Int): Boolean {
-        commandSender.sendMessage(ChatColor.RED.toString() + "Argumentos insuficientes. Necessário $min, fornecido ${args.size}")
+        commandSender.sendMessage("Argumentos insuficientes. Necessário $min, fornecido ${args.size}".color(ChatColor.RED))
         return true
     }
     
     fun notFound(commandSender: CommandSender, type:String): Boolean{
-        commandSender.sendMessage(ChatColor.RED.toString()+"O $type não foi encontrado.")
+        commandSender.sendMessage("O $type não foi encontrado.".color(ChatColor.RED))
         return true
     }
     

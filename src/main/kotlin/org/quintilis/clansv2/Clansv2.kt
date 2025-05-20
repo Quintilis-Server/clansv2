@@ -1,11 +1,13 @@
 package org.quintilis.clansv2
 
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
 import org.quintilis.clansv2.commands.ally.AllyCommand
 import org.quintilis.clansv2.commands.clan.ClanCommand
 import org.quintilis.clansv2.commands.clan.ClanCommands
 import org.quintilis.clansv2.commands.enemy.EnemyCommand
+import org.quintilis.clansv2.commands.invite.InviteCommand
 import org.quintilis.clansv2.commands.war.WarCommand
 import org.quintilis.clansv2.events.PlayerEventListener
 import org.quintilis.clansv2.managers.InviteManager
@@ -40,6 +42,7 @@ class Clansv2 : JavaPlugin() {
         this.getCommand("ally")?.setExecutor(AllyCommand())
         this.getCommand("enemy")?.setExecutor(EnemyCommand())
         this.getCommand("war")?.setExecutor(WarCommand())
+        this.getCommand("invite")?.setExecutor(InviteCommand())
     }
     
     override fun onDisable() {

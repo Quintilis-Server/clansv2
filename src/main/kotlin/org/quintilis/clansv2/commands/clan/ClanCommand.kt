@@ -1,6 +1,7 @@
 package org.quintilis.clansv2.commands.clan
 
 import org.bson.types.ObjectId
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -9,8 +10,12 @@ import org.bukkit.command.TabExecutor
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.entities.ClanEntity
+import org.quintilis.clansv2.entities.Invite
 import org.quintilis.clansv2.managers.ClanManager
+import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.PlayerManager
+import org.quintilis.clansv2.string.bold
+import org.quintilis.clansv2.string.color
 
 class ClanCommand: CommandExecutor, TabExecutor {
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<String>): Boolean {
@@ -25,6 +30,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
             ClanCommands.DELETE.command -> delete(p0)
             ClanCommands.LIST.command -> list(p0)
             ClanCommands.SET.command -> set(p0, p3.sliceArray(1 until p3.size))
+            ClanCommands.INVITE.command -> sendInvite(p0, p3.sliceArray(1 until p3.size))
         }
         return true
     }
@@ -35,11 +41,16 @@ class ClanCommand: CommandExecutor, TabExecutor {
                 ClanCommands.entries.map { it.command }
             }
             2->{
-                if (p3[0].equals(ClanCommands.SET.command, ignoreCase = true)) {
-                    ClanSetSubCommands.entries.map { it.command }
-                } else {
-                    emptyList()
+                when(p3[0]){
+                    ClanCommands.SET.command -> ClanSetSubCommands.entries.map { it.command }
+                    ClanCommands.INVITE.command -> ClanInviteSubCommands.entries.map { it.command }
+                    else -> emptyList()
                 }
+//                if (p3[0].equals(ClanCommands.SET.command, ignoreCase = true)) {
+//                    ClanSetSubCommands.entries.map { it.command }
+//                } else {
+//                    emptyList()
+//                }
             }
             else -> emptyList()
         }
@@ -56,7 +67,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
     }
     
     
-    fun create(commandSender: CommandSender, args: Array<String>) {
+    private fun create(commandSender: CommandSender, args: Array<String>) {
         
         if(args.isEmpty()) {
             CommandException.sendAllUsage(commandSender, arrayOf(ClanCommands.CREATE.usage))
@@ -92,7 +103,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
         commandSender.sendMessage("Clã ${clan.name} criado com sucesso!")
     }
     
-    fun delete(commandSender: CommandSender){
+    private fun delete(commandSender: CommandSender){
         val clan = ClanManager.getClanByOwner(commandSender as Player)
         if(clan== null) {
             commandSender.sendMessage("Você não é dono de nenhum clã!")
@@ -102,20 +113,20 @@ class ClanCommand: CommandExecutor, TabExecutor {
         commandSender.sendMessage("Clã deletado com sucesso!")
     }
     
-    fun list(commandSender: CommandSender){
+    private fun list(commandSender: CommandSender){
         var out = ""
         ClanManager.listClans().forEach {
             println(it)
-            out += "${ChatColor.YELLOW}Nome: ${ChatColor.RESET}${it.name}, " +
-                    "${ChatColor.YELLOW}Tag: ${ChatColor.RESET}${it.tag?:""}, " +
-                    "${ChatColor.YELLOW}Dono: ${ChatColor.RESET}${PlayerManager.getPlayerById(it.owner)!!.name}, " +
-                    "${ChatColor.YELLOW}Pontos: ${ChatColor.RESET}${it.points}" +
-                    "\n"
+            out += ("Nome:".color(ChatColor.YELLOW).bold() + it.name + ", " +
+                    "Tag: ".color(ChatColor.YELLOW).bold() + (it.tag ?: "") + ", " +
+                    "Dono: ".color(ChatColor.YELLOW).bold() + PlayerManager.getPlayerById(it.owner)!!.name + ", " +
+                    "Pontos: ".color(ChatColor.YELLOW).bold() + it.points +
+                    "\n")
         }
         commandSender.sendMessage(out)
     }
     
-    fun set(commandSender: CommandSender, args: Array<String>){
+    private fun set(commandSender: CommandSender, args: Array<String>){
         val clan = ClanManager.getClanByOwner(commandSender as Player)
         if(clan == null) {
             CommandException.notClanLeader(commandSender)
@@ -137,5 +148,29 @@ class ClanCommand: CommandExecutor, TabExecutor {
             }
         }
         commandSender.sendMessage("Valor ${args.getOrNull(0)} alterado para: $setValue")
+    }
+    
+    private fun sendInvite(commandSender: CommandSender, args: Array<String>){
+        val clan = ClanManager.getClanByOwner(commandSender as Player)
+        if(clan == null) {
+            CommandException.notClanLeader(commandSender)
+            return
+        }
+        
+        if(args.isEmpty()) {
+            CommandException.sendAllUsage(commandSender, arrayOf(ClanCommands.INVITE.usage))
+            return
+        }
+        
+        val playerSender: Player = commandSender
+        val playerReceiver = Bukkit.getPlayer(args[0])
+        if(playerReceiver == null){
+            CommandException.notFound(commandSender, "jogador")
+            return
+        }
+        
+        InviteManager.addPlayerInvite(playerSender, playerReceiver, clan)
+        
+        
     }
 }

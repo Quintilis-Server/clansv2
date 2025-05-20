@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.commands.CommandException
-import org.quintilis.clansv2.commands.enemy.EnemyCommands
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.EnemyManager
 
