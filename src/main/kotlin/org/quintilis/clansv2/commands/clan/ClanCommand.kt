@@ -43,7 +43,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
             2->{
                 when(p3[0]){
                     ClanCommands.SET.command -> ClanSetSubCommands.entries.map { it.command }
-                    ClanCommands.INVITE.command -> ClanInviteSubCommands.entries.map { it.command }
+                    ClanCommands.INVITE.command -> listOf("send")
                     else -> emptyList()
                 }
 //                if (p3[0].equals(ClanCommands.SET.command, ignoreCase = true)) {

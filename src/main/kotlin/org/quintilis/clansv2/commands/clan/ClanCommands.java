@@ -5,7 +5,8 @@ public enum ClanCommands {
     DELETE("delete", "/clan delete"),
     LIST("list", "/clan list"),
     SET("set", "/clan set <field> <value>"),
-    INVITE("invite", "/clan invite send <player>");
+    INVITE("invite", "/clan invite send <player>"),
+    MEMBER("member", "/clan member <player>");
 
     private final String command;
     private final String usage;
