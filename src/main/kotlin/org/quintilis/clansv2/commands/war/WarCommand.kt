@@ -53,7 +53,6 @@ class WarCommand: CommandExecutor, TabCompleter {
                 )
                 return
             }
-//            commandSender.sendMessage("Os clãs são aliados, escreva \"sim\" para ${ChatColor.BOLD}realizar o ato hediondo")
         }
         
         EnemyManager.add(clan,commandSender)

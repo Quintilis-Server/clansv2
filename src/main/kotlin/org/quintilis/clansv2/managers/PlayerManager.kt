@@ -25,6 +25,10 @@ object PlayerManager {
         return this.player.find(eq("_id", id)).first()
     }
     
+    fun getPlayerByName(name: String): PlayerEntity? {
+        return this.player.find(eq("name", name)).first()
+    }
+    
     fun setClan(id: UUID, clan: ClanEntity) {
         println(id.toString())
         if (this.exists(id)) {

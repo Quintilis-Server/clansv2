@@ -1,16 +1,13 @@
 package org.quintilis.clansv2.commands.clan;
 
-public enum ClanCommands {
-    CREATE("create", "/clan create <name> <tag>"),
-    DELETE("delete", "/clan delete"),
-    LIST("list", "/clan list"),
-    SET("set", "/clan set <field> <value>"),
-    MEMBER("member", "/clan member <invite|remove>");
+public enum ClanMemberSubCommands {
+    KICK("kick", "/clan member kick <player>"),
+    INVITE("invite", "/clan member invite <player>");
 
     private final String command;
     private final String usage;
 
-    ClanCommands(String command, String usage) {
+    ClanMemberSubCommands(String command, String usage) {
         this.command = command;
         this.usage = usage;
     }
