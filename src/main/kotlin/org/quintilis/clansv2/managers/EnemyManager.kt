@@ -1,5 +1,6 @@
 package org.quintilis.clansv2.managers
 
+import com.mongodb.client.model.Filters.eq
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
@@ -25,7 +26,5 @@ object EnemyManager {
         }
     }
     
-    fun remove(receiver: ClanEntity, sender: ClanEntity) {
-        ClanManager.sendMessageToMembers(receiver, "${sender.name} fez as pazes")
-    }
+    
 }

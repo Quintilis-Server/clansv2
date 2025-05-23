@@ -106,13 +106,23 @@ object ClanManager {
         )
         this.clan.updateOne(
             eq("_id", ally._id),
-            push("allies", clan._id)
+            pull("allies", clan._id)
         )
     }
     fun removeMember(clan: ClanEntity, member: PlayerEntity) {
         this.clan.updateOne(
             eq("_id", clan._id),
             pull("members", member._id)
+        )
+    }
+    fun removeEnemy(clan: ClanEntity, clanSender: ClanEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            pull("enemies", clanSender._id)
+        )
+        this.clan.updateOne(
+            eq("_id", clanSender._id),
+            pull("enemies", clan._id)
         )
     }
     

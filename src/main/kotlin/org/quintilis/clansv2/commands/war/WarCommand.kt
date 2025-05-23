@@ -9,6 +9,9 @@ import org.bukkit.entity.Player
 import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.EnemyManager
+import org.quintilis.clansv2.string.bold
+import org.quintilis.clansv2.string.color
+import org.quintilis.clansv2.string.italic
 
 class WarCommand: CommandExecutor, TabCompleter {
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<String>): Boolean {
@@ -48,8 +51,8 @@ class WarCommand: CommandExecutor, TabCompleter {
             if (args.size < 2 || !args[1].equals("sim", ignoreCase = true)) {
                 commandSender.sendMessage(
                     "Os clãs são aliados! " +
-                            "Se tiver certeza, repita o comando para ${ChatColor.BOLD}realizar o ato hediondo${ChatColor.RESET}:\n" +
-                            "${ChatColor.YELLOW}${ChatColor.BOLD}/clan enemy remove ${clan.name} sim"
+                            "Se tiver certeza, repita o comando para ${"realizar o ato hediondo".bold().italic().color(ChatColor.DARK_RED)}:\n" +
+                            "/ally remove ${clan.name}".color(ChatColor.YELLOW)
                 )
                 return
             }

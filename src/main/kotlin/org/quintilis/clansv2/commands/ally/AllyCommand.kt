@@ -108,6 +108,10 @@ class AllyCommand: CommandExecutor, TabCompleter {
             return commandSender.sendMessage("Clã não encontrada")
         }
         
+        if(senderClan.enemies.find { it == receiverClan._id } != null) {
+            return commandSender.sendMessage("Você não pode enviar convites para clãs inimigos")
+        }
+        
         if(senderClan.allies.find { it == receiverClan._id } != null || receiverClan.allies.find { it == senderClan._id } != null) {
             return commandSender.sendMessage("Os clãs ja são aliados")
         }

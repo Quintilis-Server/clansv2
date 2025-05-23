@@ -30,7 +30,13 @@ class ClanCommand: CommandExecutor, TabExecutor {
             ClanCommands.DELETE.command -> delete(p0)
             ClanCommands.LIST.command -> list(p0)
             ClanCommands.SET.command -> set(p0, p3.sliceArray(1 until p3.size))
-            ClanCommands.MEMBER.command -> memberCommands(p0, p3.sliceArray(1 until p3.size))
+            ClanCommands.MEMBER.command -> {
+                when(p3[1]){
+                    ClanMemberSubCommands.INVITE.command -> sendInvite(p0, p3.sliceArray(2 until p3.size))
+                    ClanMemberSubCommands.KICK.command -> kick(p0, p3.sliceArray(2 until p3.size))
+                    ClanMemberSubCommands.LIST.command -> listMembers(p0)
+                }
+            }
         }
         return true
     }
@@ -55,8 +61,8 @@ class ClanCommand: CommandExecutor, TabExecutor {
             3->{
                 if(clan == null) return emptyList()
                 when(p3[1]){
-                    ClanMemberSubCommands.INVITE.command -> Bukkit.getOnlinePlayers().filterNot { it -> clan?.members!!.contains(PlayerManager.getPlayerByMineId(it.uniqueId)?._id) }.map { it.name }
-                    ClanMemberSubCommands.KICK.command -> ClanManager.getClanByOwner(p0)!!.members.map { PlayerManager.getPlayerById(it)?.name }
+                    ClanMemberSubCommands.INVITE.command -> Bukkit.getOnlinePlayers().filterNot { it -> clan.members.contains(PlayerManager.getPlayerByMineId(it.uniqueId)?._id) }.map { it.name }
+                    ClanMemberSubCommands.KICK.command -> clan.members.filterNot { it == clan.owner }.map { PlayerManager.getPlayerById(it)?.name }
                     else -> emptyList()
                 }
             }
@@ -149,16 +155,6 @@ class ClanCommand: CommandExecutor, TabExecutor {
     }
     
     //member commands
-    private fun memberCommands(commandSender: CommandSender, args: Array<String>){
-        if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, ClanMemberSubCommands.entries.map { it.usage }.toTypedArray())
-            return
-        }
-        when(args[0]){
-            ClanMemberSubCommands.INVITE.command -> sendInvite(commandSender, args.sliceArray(1 until args.size))
-            ClanMemberSubCommands.KICK.command -> kick(commandSender, args.sliceArray(1 until args.size))
-        }
-    }
     
     private fun kick(commandSender: CommandSender, args: Array<String>){
         val clan = ClanManager.getClanByOwner(commandSender as Player)
@@ -177,10 +173,14 @@ class ClanCommand: CommandExecutor, TabExecutor {
             CommandException.notFound(commandSender, "jogador")
             return
         }
-        
+        if(playerReceiver._id == clan.owner) {
+            commandSender.sendMessage("Você não pode remover o dono do clã.".color(ChatColor.RED).bold())
+            return
+        }
         
         ClanManager.removeMember(clan, playerReceiver)
-        ClanManager.sendMessageToMembers(clan,"Usuário ${playerReceiver.name.bold()} foi removido do clã ${clan.name.bold()}".color(ChatColor.RED))
+        ClanManager.sendMessageToMembers(clan,"${"Usuário".color(ChatColor.RED)} ${playerReceiver.name.bold()} ${"foi removido do clã".color(
+            ChatColor.RED)} ${clan.name.bold().color(ChatColor.RED)}")
     }
     
     private fun sendInvite(commandSender: CommandSender, args: Array<String>){
@@ -204,6 +204,28 @@ class ClanCommand: CommandExecutor, TabExecutor {
         
         InviteManager.addPlayerInvite(playerSender, playerReceiver, clan)
         commandSender.sendMessage("Convite enviado ${playerReceiver.name} para o clã ${clan.name}")
+    }
+    
+    private fun listMembers(commandSender: CommandSender){
+        val clan = ClanManager.getClanByOwner(commandSender as Player)
+        if(clan == null) {
+            CommandException.notClanLeader(commandSender)
+            return
+        }
+        commandSender.sendMessage("Membros do clã ${clan.name.bold()}".color(ChatColor.YELLOW))
+        clan.members.forEach {
+            val player = PlayerManager.getPlayerById(it)
+            commandSender.sendMessage("${
+                if (clan.owner == it) {
+                    "[${"Dono".color(ChatColor.AQUA).bold()}]"
+                }
+                else{;
+                    
+                    "[${"Membro".color(ChatColor.GREEN).bold()}]"
+                }
+            } ${player?.name!!.bold()}"
+            )
+        }
     }
     
 }

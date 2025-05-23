@@ -72,7 +72,7 @@ object InviteManager {
         )
         val receiverOwner = Bukkit.getPlayer(PlayerManager.getUUID(receiver.owner))
         alliesInvites.add(invite)
-        receiverOwner?.sendMessage("O clã ${sender.name} quer se aliar com você. use: \"/ally accept ${sender.name}\" para aceitar.")
+        receiverOwner?.sendMessage("O clã ${sender.name.bold()} quer se aliar com você. use: \"${"/ally invite accept ${sender.name}".bold()}\" para aceitar.")
     }
     
     fun getAllyInvitesByReceiver(receiver: ObjectId): List<AllyInvite> {

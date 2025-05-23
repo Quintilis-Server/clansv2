@@ -10,6 +10,7 @@ import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.EnemyManager
+import org.quintilis.clansv2.string.bold
 
 class EnemyCommand: CommandExecutor, TabCompleter {
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<String>): Boolean {
@@ -48,7 +49,10 @@ class EnemyCommand: CommandExecutor, TabCompleter {
             return
         }
         
-        EnemyManager.remove(clan, clanSender)
+        ClanManager.removeEnemy(clan,clanSender)
+        commandSender.sendMessage("Removido ${clan.name.bold()} como inimigo do clã ${clanSender.name.bold()}")
+        ClanManager.sendMessageToMembers(clan,"${clan.name.bold()} fez as pazes com o clã ${clanSender.name.bold()}")
+        ClanManager.sendMessageToMembers(clanSender,"${clanSender.name.bold()} fez as pazes com o clã ${clan.name.bold()}")
     }
     
     override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<out String?>): List<String?>? {
