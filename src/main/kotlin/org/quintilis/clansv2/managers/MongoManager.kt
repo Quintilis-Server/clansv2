@@ -14,6 +14,8 @@ import org.quintilis.clansv2.entities.PlayerEntity
 
 import org.bson.codecs.configuration.CodecRegistries.*
 import org.bson.codecs.pojo.PojoCodecProvider
+import org.quintilis.clansv2.entities.AllyInvite
+import org.quintilis.clansv2.entities.Invite
 
 object MongoManager {
     lateinit var mongoClient: MongoClient
@@ -21,6 +23,9 @@ object MongoManager {
     lateinit var clanCollection: MongoCollection<ClanEntity>
     lateinit var playerCollection: MongoCollection<PlayerEntity>
     lateinit var deathCollection: MongoCollection<DeathEntity>
+    lateinit var playerInviteCollection: MongoCollection<Invite>
+    lateinit var allyInviteCollection: MongoCollection<AllyInvite>
+    
     private val pojoCodecRegistry = CodecRegistries.fromRegistries(
         MongoClientSettings.getDefaultCodecRegistry(),
         fromProviders(PojoCodecProvider.builder()
