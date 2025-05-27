@@ -44,25 +44,25 @@ object InviteManager {
         playerInvites.insertOne(invite)
     }
     
-    fun getPlayerInvitesByReceiver(receiver: ObjectId): List<Invite> {
-        return playerInvites.find(eq("receiver", receiver)).toList()
+    fun getPlayerInvitesByReceiver(receiver: PlayerEntity): List<Invite> {
+        return playerInvites.find(eq("receiver", receiver._id)).toList()
     }
     
     fun getPlayerInviteBySender(sender: ObjectId): Invite? {
         return playerInvites.find(eq("sender", sender)).first()
     }
     
-    fun acceptInvite(sender: Player, clan: ClanEntity) {
-        val senderEntity: PlayerEntity = PlayerManager.getPlayerByMineId(sender.uniqueId)!!
-        ClanManager.addMember(clan, senderEntity)
-        ClanManager.sendMessageToMembers(clan, "O jogador ${sender.name.bold()} entrou para o clã")
-        playerInvites.deleteOne(and(eq("sender", senderEntity._id), eq("clan", clan._id)))
+    fun acceptInvite(receiver: Player, clan: ClanEntity) {
+        val receiverEntity: PlayerEntity = PlayerManager.getPlayerByMineId(receiver.uniqueId)!!
+        ClanManager.addMember(clan, receiverEntity)
+        ClanManager.sendMessageToMembers(clan, "O jogador ${receiver.name.bold()} entrou para o clã")
+        playerInvites.deleteOne(and(eq("receiver", receiverEntity._id), eq("clan", clan._id)))
     }
-    fun rejectInvite(sender: Player, clan: ClanEntity) {
+    fun rejectInvite(receiver: Player, clan: ClanEntity) {
         val owner = PlayerManager.getPlayerById(clan.owner)!!
-        val senderEntity: PlayerEntity = PlayerManager.getPlayerByMineId(sender.uniqueId)!!
+        val receiverEntity: PlayerEntity = PlayerManager.getPlayerByMineId(receiver.uniqueId)!!
         Bukkit.getPlayer(owner.mineId)?.sendMessage("A sua solicitação de entrar no clã ${clan.name} foi " + "recusada.".color(ChatColor.RED).italic())
-        playerInvites.deleteOne(and(eq("sender", senderEntity._id), eq("clan", clan._id)))
+        playerInvites.deleteOne(and(eq("sender", receiverEntity._id), eq("clan", clan._id)))
     }
     
     //ally invite

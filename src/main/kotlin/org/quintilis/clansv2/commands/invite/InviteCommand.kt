@@ -9,6 +9,7 @@ import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.InviteManager
+import org.quintilis.clansv2.managers.PlayerManager
 import org.quintilis.clansv2.string.bold
 import org.quintilis.clansv2.string.italic
 
@@ -64,7 +65,7 @@ class InviteCommand: CommandExecutor, TabCompleter {
     }
     
     private fun list(commandSender: CommandSender){
-        val invites = InviteManager.getPlayerInvitesByReceiver((commandSender as Player).uniqueId)
+        val invites = InviteManager.getPlayerInvitesByReceiver(PlayerManager.getPlayerByMineId((commandSender as Player).uniqueId)!!)
         commandSender.sendMessage(invites.joinToString { "$it, \n" }.ifEmpty { "Você não tem convites pendentes."})
     }
     
@@ -81,11 +82,10 @@ class InviteCommand: CommandExecutor, TabCompleter {
     }
     
     private fun listInvites(commandSender: CommandSender): List<ClanEntity>{
-        val clans = InviteManager.getPlayerInvitesByReceiver((commandSender as Player).uniqueId)
+        return InviteManager.getPlayerInvitesByReceiver(PlayerManager.getPlayerByMineId((commandSender as Player).uniqueId)!!)
             .map {
-                ClanManager.getClanById(it.clan)!!
+                ClanManager.getClanById(it.clan!!)!!
             }
-        return clans
     }
     
 }
