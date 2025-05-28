@@ -2,6 +2,7 @@ package org.quintilis.clansv2.managers
 
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Updates.set
 import org.bson.types.ObjectId
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -56,34 +57,47 @@ object InviteManager {
         val receiverEntity: PlayerEntity = PlayerManager.getPlayerByMineId(receiver.uniqueId)!!
         ClanManager.addMember(clan, receiverEntity)
         ClanManager.sendMessageToMembers(clan, "O jogador ${receiver.name.bold()} entrou para o clã")
-        playerInvites.deleteOne(and(eq("receiver", receiverEntity._id), eq("clan", clan._id)))
+//        playerInvites.deleteOne(and(eq("receiver", receiverEntity._id), eq("clan", clan._id)))
+        playerInvites.updateOne(
+            and(eq("receiver", receiverEntity._id), eq("clan", clan._id)),
+            set("active", false),
+        )
+        playerInvites.updateOne(
+            and(eq("receiver", receiverEntity._id), eq("clan", clan._id)),
+            set("accepted", true),
+        )
     }
     fun rejectInvite(receiver: Player, clan: ClanEntity) {
         val owner = PlayerManager.getPlayerById(clan.owner)!!
         val receiverEntity: PlayerEntity = PlayerManager.getPlayerByMineId(receiver.uniqueId)!!
         Bukkit.getPlayer(owner.mineId)?.sendMessage("A sua solicitação de entrar no clã ${clan.name} foi " + "recusada.".color(ChatColor.RED).italic())
-        playerInvites.deleteOne(and(eq("sender", receiverEntity._id), eq("clan", clan._id)))
+        
+        playerInvites.updateOne(
+            and(eq("receiver", receiverEntity._id), eq("clan", clan._id)),
+            set("active", false)
+        )
+//        playerInvites.deleteOne(and(eq("sender", receiverEntity._id), eq("clan", clan._id)))
     }
     
     //ally invite
     
     fun getAllyInvites() = alliesInvites.find().toList()
     
-    fun addAllyInvite(receiver: ClanEntity, sender: ClanEntity) {
+    fun addAllyInvite(sender: ClanEntity, receiver: ClanEntity) {
         val invite = AllyInvite(
             sender = sender._id, receiver = receiver._id, expireDate = Date(System.currentTimeMillis() + (allyExpirationHours * 60 * 60 * 1000)),
         )
-        val receiverOwner = Bukkit.getPlayer(PlayerManager.getUUID(receiver.owner))
+        val receiverOwner = Bukkit.getPlayer(PlayerManager.getUUID(sender.owner))
         alliesInvites.insertOne(invite)
-        receiverOwner?.sendMessage("O clã ${sender.name.bold()} quer se aliar com você. use: \"${"/ally invite accept ${sender.name}".bold()}\" para aceitar.")
+        receiverOwner?.sendMessage("O clã ${receiver.name.bold()} quer se aliar com você. use: \"${"/ally invite accept ${receiver.name}".bold()}\" para aceitar.")
     }
     
-    fun getAllyInvitesByReceiver(receiver: ObjectId): List<AllyInvite> {
-        return alliesInvites.find(eq("receiver", receiver)).toList()
+    fun getAllyInvitesByReceiver(receiver: ClanEntity): List<AllyInvite> {
+        return alliesInvites.find(eq("receiver", receiver._id)).toList()
     }
     
-    fun getAllyInvitesBySender(sender: ObjectId?): List<AllyInvite?> {
-        return alliesInvites.find(eq("sender", sender)).toList()
+    fun getAllyInvitesBySender(sender: ClanEntity): List<AllyInvite?> {
+        return alliesInvites.find(eq("sender", sender._id)).toList()
     }
     
     
@@ -103,13 +117,24 @@ object InviteManager {
         for(member in receiver.members) {
             Bukkit.getPlayer(PlayerManager.getPlayerById(member)?.mineId!!)?.sendMessage("O seu clã se aliou ${sender.name}.")
         }
-        
-        alliesInvites.deleteOne(and(eq("sender", sender._id), eq("receiver", receiver._id)))
+        alliesInvites.updateOne(
+            and(eq("sender", sender._id), eq("receiver", receiver._id)),
+            set("active", false),
+        )
+        alliesInvites.updateOne(
+            and(eq("sender", sender._id), eq("receiver", receiver._id)),
+            set("accepted", true),
+        )
+//        alliesInvites.deleteOne(and(eq("sender", sender._id), eq("receiver", receiver._id)))
     }
     
     fun rejectAllyInvite(sender: ClanEntity, receiver: ClanEntity) {
         Bukkit.getPlayer(PlayerManager.getUUID(sender.owner))?.sendMessage("A sua solicitação de aliação foi recusada.")
-        alliesInvites.deleteOne(and(eq("sender", sender._id), eq("receiver", receiver._id)))
+        alliesInvites.updateOne(
+            and(eq("sender", sender._id), eq("receiver", receiver._id)),
+            set("active", false)
+        )
+//        alliesInvites.deleteOne(and(eq("sender", sender._id), eq("receiver", receiver._id)))
     }
     
 }

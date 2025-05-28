@@ -11,6 +11,7 @@ import org.bukkit.entity.Player
 import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.entities.Invite
+import org.quintilis.clansv2.entities.PlayerEntity
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.PlayerManager
@@ -195,8 +196,8 @@ class ClanCommand: CommandExecutor, TabExecutor {
             return
         }
         
-        val playerSender: Player = commandSender
-        val playerReceiver = Bukkit.getPlayer(args[0])
+        val playerSender: PlayerEntity = PlayerManager.getPlayerByMineId(commandSender.uniqueId)!!
+        val playerReceiver = PlayerManager.getPlayerByName(args[0])
         if(playerReceiver == null){
             CommandException.notFound(commandSender, "jogador")
             return

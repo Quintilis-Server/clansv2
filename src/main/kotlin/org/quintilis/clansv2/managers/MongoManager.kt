@@ -48,6 +48,8 @@ object MongoManager {
         clanCollection = database.getCollection("clans", ClanEntity::class.java)
         playerCollection = database.getCollection("players", PlayerEntity::class.java)
         deathCollection = database.getCollection("deaths", DeathEntity::class.java)
+        playerInviteCollection = database.getCollection("playerInvites", Invite::class.java)
+        allyInviteCollection = database.getCollection("allyInvites", AllyInvite::class.java)
     }
     
     fun close() {

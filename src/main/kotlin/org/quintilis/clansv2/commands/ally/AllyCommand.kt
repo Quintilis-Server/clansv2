@@ -26,7 +26,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
         }
         
         when(p3[0]){
-            AllyCommands.LIST.command -> list(commandSender = p0)
+            AllyCommands.LIST.command -> list(commandSender = p0, arg = p3.getOrNull(1))
             AllyCommands.REMOVE.command -> remove(commandSender = p0, args = p3.sliceArray(1 until p3.size))
             AllyCommands.INVITE.command ->{
                 when(p3[1]){
@@ -40,17 +40,28 @@ class AllyCommand: CommandExecutor, TabCompleter {
     }
     
     
-    private fun list(commandSender: CommandSender){
+    private fun list(commandSender: CommandSender,arg: String?){
         val clan = ClanManager.getClanByOwner(commandSender as Player)
         if(clan == null){
             CommandException.notClanLeader(commandSender)
             return
         }
+        when(arg){
+            AllyListSubCommands.INVITES.command ->{
+                println(clan._id)
+                val invites = InviteManager.getAllyInvitesByReceiver(clan)
+                println(invites.map { it })
+                commandSender.sendMessage("Invites de amizade (${invites.size}):".color(ChatColor.YELLOW))
+                commandSender.sendMessage(invites.map{it.showInfo()}.joinToString {", \n"})
+            }
+            AllyListSubCommands.ALLIES.command ->{
+                val allies = clan.allies.map { ClanManager.getClanById(it)!! }
+                commandSender.sendMessage("Alianças (${allies.size}):".color(ChatColor.YELLOW))
+                commandSender.sendMessage(allies.map { it.name }.joinToString {", \n"})
+            }
+            else -> CommandException.sendAllUsage(commandSender, AllyListSubCommands.entries.map { it.usage }.toTypedArray())
+        }
         
-        val player = PlayerManager.getPlayerByMineId(commandSender.uniqueId)!!
-        val invites = InviteManager.getAllyInvitesByReceiver(player._id)
-        commandSender.sendMessage("Invites de amizade (${invites.size}):".color(ChatColor.YELLOW))
-        commandSender.sendMessage(invites.joinToString {", \n"})
     }
     
     private fun accept(commandSender: CommandSender, args: Array<String>) {
@@ -119,6 +130,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
         }
         
         InviteManager.addAllyInvite(clan, clanReceiver)
+        Bukkit.getPlayer(PlayerManager.getPlayerById(clanReceiver.owner)!!.mineId)?.sendMessage("Convite de aliança do clã: ${clan.name.bold()} escreva ${"/ally invite accept ${clan.name}".bold()} para aceitar.")
         commandSender.sendMessage("Convite enviado.".color(ChatColor.GREEN))
     }
     
@@ -186,7 +198,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
     private fun listAllyInvites(player: Player): List<String> {
         val receiverClan = ClanManager.getClanByOwner(player)!!
         println(receiverClan._id)
-        val invites = InviteManager.getAllyInvitesByReceiver(receiverClan._id)
+        val invites = InviteManager.getAllyInvitesByReceiver(receiverClan)
         return invites.map {
             ClanManager.getClanById(it.sender!!)!!.name
         }

@@ -16,7 +16,9 @@ data class Invite @BsonCreator constructor(
     @param:BsonProperty("receiver") val receiver: ObjectId,
     @param:BsonProperty("clan") val clan: ObjectId?,
     @param:BsonProperty("sendDate") val sendDate: Date = Date(System.currentTimeMillis()),
-    @param:BsonProperty("expireDate") val expireDate: Date
+    @param:BsonProperty("expireDate") val expireDate: Date,
+    @param:BsonProperty("accepted") val accepted: Boolean = false,
+    @param:BsonProperty("active") val active: Boolean = true,
 ) {
     override fun toString(): String {
         val sender = PlayerManager.getPlayerById(sender)!!
