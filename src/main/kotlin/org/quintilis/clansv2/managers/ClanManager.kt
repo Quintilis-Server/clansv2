@@ -14,8 +14,9 @@ object ClanManager {
     private val player: MongoCollection<PlayerEntity> = MongoManager.playerCollection;
     private val invites: InviteManager = InviteManager
     
-    fun create(clan: ClanEntity) {
-        clan.members.add(clan.owner)
+    fun create(clan: ClanEntity, owner: Player) {
+        clan.members.add(clan.owner!!)
+        PlayerManager.setClan(owner.uniqueId, clan)
         this.clan.insertOne(clan)
     }
     
@@ -26,7 +27,7 @@ object ClanManager {
                 set("clan", null)
             )
         }
-        sendMessageToMembers(clan, "O seu clã foi deletado.")
+        sendMessageToMembers(clan, "Clã esta sendo desfeito por ${PlayerManager.getPlayerById(clan.owner)?.name}")
         this.clan.deleteOne(eq("_id", clan._id))
     }
     
@@ -43,11 +44,20 @@ object ClanManager {
     }
     
     fun getClanByOwner(owner: Player): ClanEntity? {
-        return this.clan.find(eq("owner", owner.uniqueId)).first()
+        val player = PlayerManager.getPlayerByMineId(owner.uniqueId)!!
+        return this.clan.find(eq("owner", player._id)).first()
+    }
+    fun getAllClans(): List<ClanEntity> {
+        return this.clan.find().toList()
     }
     
     fun exists(clanName: String): Boolean {
         return this.clan.find(eq("name", clanName)).first() != null;
+    }
+    
+    fun isOwner(player: Player): Boolean {
+        val playerEntity = PlayerManager.getPlayerByMineId(player.uniqueId)!!
+        return this.clan.find(eq("owner", playerEntity._id)).first() != null;
     }
     
     fun isOwner(player: Player, clanId: ObjectId): Boolean {
@@ -57,19 +67,77 @@ object ClanManager {
     
     fun sendMessageToMembers(clan: ClanEntity, message: String) {
         clan.members.forEach {
-            Bukkit.getPlayer(it)?.sendMessage(message)
+            Bukkit.getPlayer(PlayerManager.getPlayerById(it)?.mineId!!)?.sendMessage(message)
         }
     }
     
     fun addAlly(clan: ClanEntity, ally: ClanEntity) {
         this.clan.updateOne(
             eq("_id", clan._id),
-            set("allies", ally._id)
+            push("allies", ally._id)
         )
         this.clan.updateOne(
             eq("_id", ally._id),
-            set("allies", clan._id)
+            push("allies", clan._id)
+        )
+    }
+    fun addEnemy(clan: ClanEntity, enemy: ClanEntity){
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            push("enemies", enemy._id)
+        )
+        this.clan.updateOne(
+            eq("_id", enemy._id),
+            push("enemies", clan._id)
+        )
+    }
+    fun addMember(clan: ClanEntity, member: PlayerEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            push("members", member._id)
         )
     }
     
+    
+    fun removeAlly(clan: ClanEntity, ally: ClanEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            pull("allies", ally._id)
+        )
+        this.clan.updateOne(
+            eq("_id", ally._id),
+            pull("allies", clan._id)
+        )
+    }
+    fun removeMember(clan: ClanEntity, member: PlayerEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            pull("members", member._id)
+        )
+    }
+    fun removeEnemy(clan: ClanEntity, clanSender: ClanEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            pull("enemies", clanSender._id)
+        )
+        this.clan.updateOne(
+            eq("_id", clanSender._id),
+            pull("enemies", clan._id)
+        )
+    }
+    
+    
+    fun setName(name: String, clan: ClanEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            set("name", name)
+        )
+    }
+    
+    fun setTag(tag: String,clan: ClanEntity) {
+        this.clan.updateOne(
+            eq("_id", clan._id),
+            set("tag", tag)
+        )
+    }
 }
