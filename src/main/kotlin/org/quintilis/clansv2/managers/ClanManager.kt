@@ -5,9 +5,12 @@ import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.Updates.*
 import org.bson.types.ObjectId
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.entities.PlayerEntity
+import org.quintilis.clansv2.string.bold
+import org.quintilis.clansv2.string.color
 
 object ClanManager {
     private val clan: MongoCollection<ClanEntity> = MongoManager.clanCollection;
@@ -23,11 +26,12 @@ object ClanManager {
     fun delete(clan: ClanEntity){
         clan.members.forEach {
             player.updateOne(
-                eq("mineId", it),
-                set("clan", null)
+                eq("_id", it),
+                set("clanId", null)
             )
         }
-        sendMessageToMembers(clan, "Clã esta sendo desfeito por ${PlayerManager.getPlayerById(clan.owner)?.name}")
+        sendMessageToMembers(clan, "Clã esta sendo desfeito por ${PlayerManager.getPlayerById(clan.owner)?.name!!.bold()}".color(
+            ChatColor.RED))
         this.clan.deleteOne(eq("_id", clan._id))
     }
     
@@ -46,6 +50,10 @@ object ClanManager {
     fun getClanByOwner(owner: Player): ClanEntity? {
         val player = PlayerManager.getPlayerByMineId(owner.uniqueId)!!
         return this.clan.find(eq("owner", player._id)).first()
+    }
+    fun getClanByMember(member: PlayerEntity):  ClanEntity?{
+        val clan  = this.clan.find(eq("members", member._id))
+        return clan.first()
     }
     fun getAllClans(): List<ClanEntity> {
         return this.clan.find().toList()
@@ -113,6 +121,10 @@ object ClanManager {
         this.clan.updateOne(
             eq("_id", clan._id),
             pull("members", member._id)
+        )
+        this.player.updateOne(
+            eq("_id", member._id),
+            set("clanId", null)
         )
     }
     fun removeEnemy(clan: ClanEntity, clanSender: ClanEntity) {

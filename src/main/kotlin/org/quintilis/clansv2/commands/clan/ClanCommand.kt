@@ -23,9 +23,6 @@ class ClanCommand: CommandExecutor, TabExecutor {
         if(p0 !is Player) {
             return CommandException.notPlayer(p0)
         }
-        if(p3.isEmpty()) {
-            return CommandException.sendAllUsage(p0, ClanCommands.entries.map { it.usage }.toTypedArray())
-        }
         when(p3[0]){
             ClanCommands.CREATE.command -> create(p0, p3.sliceArray(1 until p3.size))
             ClanCommands.DELETE.command -> delete(p0)
@@ -35,37 +32,49 @@ class ClanCommand: CommandExecutor, TabExecutor {
                 when(p3[1]){
                     ClanMemberSubCommands.INVITE.command -> sendInvite(p0, p3.sliceArray(2 until p3.size))
                     ClanMemberSubCommands.KICK.command -> kick(p0, p3.sliceArray(2 until p3.size))
-                    ClanMemberSubCommands.LIST.command -> listMembers(p0)
+                    ClanMemberSubCommands.LIST.command -> listMembers(p0, p3.sliceArray(2 until p3.size))
+                    else -> return CommandException.sendAllUsage(p0, ClanMemberSubCommands.entries.map { it.usage }.toTypedArray())
                 }
             }
+            else -> return CommandException.sendAllUsage(p0, ClanCommands.entries.map { it.usage }.toTypedArray())
         }
         return true
     }
     
     override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<String?>): List<String?>? {
         val clan = ClanManager.getClanByOwner(p0 as Player)
-//        if(clan == null){
-//
-//        }
         return when(p3.size){
             1->{
                 ClanCommands.entries.map { it.command }
             }
             2->{
-                if(clan == null) return emptyList()
                 when(p3[0]){
-                    ClanCommands.SET.command -> ClanSetSubCommands.entries.map { it.command }
-                    ClanCommands.MEMBER.command -> ClanMemberSubCommands.entries.map { it.command }
-                    else -> emptyList()
+                    ClanCommands.SET.command->{
+                        if(clan == null) return emptyList()
+                        ClanSetSubCommands.entries.map { it.command }
+                    }
+                    ClanCommands.MEMBER.command->{
+                        if(clan != null){
+                            ClanMemberSubCommands.entries.map { it.command }
+                        }else{
+                            listOf(ClanMemberSubCommands.LIST.command)
+                        }
+                    }
+                    else -> listOf()
                 }
             }
             3->{
-                if(clan == null) return emptyList()
-                when(p3[1]){
-                    ClanMemberSubCommands.INVITE.command -> Bukkit.getOnlinePlayers().filterNot { it -> clan.members.contains(PlayerManager.getPlayerByMineId(it.uniqueId)?._id) }.map { it.name }
-                    ClanMemberSubCommands.KICK.command -> clan.members.filterNot { it == clan.owner }.map { PlayerManager.getPlayerById(it)?.name }
-                    else -> emptyList()
+                if(clan!=null){
+                    return when(p3[1]){
+                        ClanMemberSubCommands.INVITE.command -> Bukkit.getOnlinePlayers().filterNot { it -> clan.members.contains(PlayerManager.getPlayerByMineId(it.uniqueId)?._id) }.map { it.name }
+                        ClanMemberSubCommands.KICK.command -> clan.members.filterNot { it == clan.owner }.map { PlayerManager.getPlayerById(it)?.name }
+                        ClanMemberSubCommands.LIST.command -> ClanManager.getAllClans().map { it.name }
+                        else -> emptyList()
+                    }
+                }else{
+                    return ClanManager.getAllClans().map { it.name }
                 }
+                return emptyList()
             }
             else -> emptyList()
         }
@@ -99,7 +108,8 @@ class ClanCommand: CommandExecutor, TabExecutor {
         }
         
         if(playerEntity.clanId != null){
-            return commandSender.sendMessage("Você ja esta em um clã.")
+            CommandException.alreadyInClan(commandSender);
+            return
         }
         
         val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender).uniqueId)!!._id, _id = ObjectId())
@@ -202,15 +212,24 @@ class ClanCommand: CommandExecutor, TabExecutor {
             CommandException.notFound(commandSender, "jogador")
             return
         }
-        
-        InviteManager.addPlayerInvite(playerSender, playerReceiver, clan)
-        commandSender.sendMessage("Convite enviado ${playerReceiver.name} para o clã ${clan.name}")
+        try{
+            InviteManager.addPlayerInvite(playerSender, playerReceiver, clan)
+        }catch (e: Exception){
+            commandSender.sendMessage("Erro ao mandar convite, talvez já tenha um convite para essa pessoa.".color(ChatColor.RED).bold())
+            println(e.message)
+        }
+        commandSender.sendMessage("Convite enviado ${playerReceiver.name.bold().color(ChatColor.YELLOW)} para o clã ${clan.name.bold().color(ChatColor.YELLOW)}")
     }
     
-    private fun listMembers(commandSender: CommandSender){
-        val clan = ClanManager.getClanByOwner(commandSender as Player)
-        if(clan == null) {
-            CommandException.notClanLeader(commandSender)
+    private fun listMembers(commandSender: CommandSender, args: Array<String>){
+        var clan: ClanEntity? = null;
+        if(!args.isEmpty()){
+            clan = ClanManager.getClanByName(args[0])
+        }else{
+            clan = ClanManager.getClanByMember(PlayerManager.getPlayerByMineId((commandSender as Player).uniqueId)!!)
+        }
+        if(clan == null){
+            CommandException.notInAClan(commandSender)
             return
         }
         commandSender.sendMessage("Membros do clã ${clan.name.bold()}".color(ChatColor.YELLOW))

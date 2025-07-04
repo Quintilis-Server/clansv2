@@ -37,4 +37,14 @@ object CommandException {
         return true
     }
     
+    fun alreadyInClan(commandSender: CommandSender): Boolean {
+        commandSender.sendMessage("Você ja esta em um clã.".color(ChatColor.RED).bold())
+        return true
+    }
+    
+    fun notInAClan(commandSender: CommandSender): Boolean {
+        commandSender.sendMessage("Você não esta em um clã.".color(ChatColor.RED).bold())
+        return true
+    }
+    
 }

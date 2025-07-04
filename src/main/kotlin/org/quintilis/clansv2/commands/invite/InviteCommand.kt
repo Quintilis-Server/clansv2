@@ -44,8 +44,13 @@ class InviteCommand: CommandExecutor, TabCompleter {
             return
         }
         
+        if(PlayerManager.getPlayerByMineId(commandSender.uniqueId)?.clanId != null) {
+            CommandException.alreadyInClan(commandSender)
+            return
+        }
+        
         InviteManager.acceptInvite(commandSender, clan)
-        commandSender.sendMessage("Convite aceito".italic())
+        commandSender.sendMessage("Convite aceito".italic().bold())
     }
     
     private fun reject(commandSender: Player, args: Array<String>) {

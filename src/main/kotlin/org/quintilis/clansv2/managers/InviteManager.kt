@@ -39,10 +39,14 @@ object InviteManager {
             clan = clan._id,
             expireDate = Date(System.currentTimeMillis() + (playerExpirationHours * 60 * 60 * 1000))
         )
+        try{
+            playerInvites.insertOne(invite)
+        }catch (e: Exception){
+            throw e
+        }
         
         Bukkit.getPlayer(receiver.mineId)?.sendMessage("O clã ${clan.name} quer te convidar para se unir. use:" + "\"/invite accept ${clan.name}\"".bold().color(
             ChatColor.YELLOW) + " para aceitar.")
-        playerInvites.insertOne(invite)
     }
     
     fun getPlayerInvitesByReceiver(receiver: PlayerEntity): List<Invite> {
@@ -59,11 +63,21 @@ object InviteManager {
         ClanManager.sendMessageToMembers(clan, "O jogador ${receiver.name.bold()} entrou para o clã")
 //        playerInvites.deleteOne(and(eq("receiver", receiverEntity._id), eq("clan", clan._id)))
         playerInvites.updateOne(
-            and(eq("receiver", receiverEntity._id), eq("clan", clan._id)),
+            and(
+                eq("receiver", receiverEntity._id),
+                eq("clan", clan._id),
+                eq("sender", clan.owner),
+                eq("active",true)
+            ),
             set("active", false),
         )
         playerInvites.updateOne(
-            and(eq("receiver", receiverEntity._id), eq("clan", clan._id)),
+            and(
+                eq("receiver", receiverEntity._id),
+                eq("clan", clan._id),
+                eq("sender", clan.owner),
+                eq("active", true),
+            ),
             set("accepted", true),
         )
     }
@@ -73,7 +87,12 @@ object InviteManager {
         Bukkit.getPlayer(owner.mineId)?.sendMessage("A sua solicitação de entrar no clã ${clan.name} foi " + "recusada.".color(ChatColor.RED).italic())
         
         playerInvites.updateOne(
-            and(eq("receiver", receiverEntity._id), eq("clan", clan._id)),
+            and(
+                eq("receiver", receiverEntity._id),
+                eq("clan", clan._id),
+                eq("sender", clan.owner),
+                eq("active", true),
+            ),
             set("active", false)
         )
 //        playerInvites.deleteOne(and(eq("sender", receiverEntity._id), eq("clan", clan._id)))
