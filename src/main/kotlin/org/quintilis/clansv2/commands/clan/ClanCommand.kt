@@ -10,7 +10,6 @@ import org.bukkit.command.TabExecutor
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.entities.ClanEntity
-import org.quintilis.clansv2.entities.Invite
 import org.quintilis.clansv2.entities.PlayerEntity
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.InviteManager
@@ -31,7 +30,12 @@ class ClanCommand: CommandExecutor, TabExecutor {
             ClanCommands.DELETE.command -> delete(p0)
             ClanCommands.LIST.command -> list(p0)
             ClanCommands.SET.command -> set(p0, p3.sliceArray(1 until p3.size))
+            ClanCommands.QUIT.command -> quit(p0)
             ClanCommands.MEMBER.command -> {
+                val newArray = p3.sliceArray(1 until p3.size)
+                if(newArray.isEmpty()) {
+                    return CommandException.sendAllUsage(p0, ClanMemberSubCommands.entries.toTypedArray())
+                }
                 when(p3[1]){
                     ClanMemberSubCommands.INVITE.command -> sendInvite(p0, p3.sliceArray(2 until p3.size))
                     ClanMemberSubCommands.KICK.command -> kick(p0, p3.sliceArray(2 until p3.size))
@@ -231,7 +235,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
         if(!args.isEmpty()){
             clan = ClanManager.getClanByName(args[0])
         }else{
-            clan = ClanManager.getClanByMember(PlayerManager.getPlayerByMineId((commandSender as Player).uniqueId)!!)
+            clan = ClanManager.getClanByMember(commandSender as Player)
         }
         if(clan == null){
             CommandException.notInAClan(commandSender)
@@ -251,6 +255,24 @@ class ClanCommand: CommandExecutor, TabExecutor {
             } ${player?.name!!.bold()}"
             )
         }
+    }
+    
+    fun quit(commandSender: CommandSender){
+        if(commandSender !is Player){
+            CommandException.notPlayer(commandSender)
+            return
+        }
+        if(!ClanManager.isInClan(player = commandSender)){
+            CommandException.notInAClan(commandSender)
+            return
+        }
+        if(ClanManager.isOwner(commandSender)){
+            commandSender.sendMessage("Você é o dono do clã, use o ${ClanCommands.DELETE.usage.color(ChatColor.RED).bold()} para deletar o clã")
+            return
+        }
+        val clan = ClanManager.getClanByMember(commandSender)!!
+        ClanManager.removeMember(commandSender)
+        commandSender.sendMessage("Você saiu do clã ${clan.name.bold()}".color(ChatColor.RED).bold())
     }
     
 }

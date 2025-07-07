@@ -14,7 +14,7 @@ import org.quintilis.clansv2.string.color
 
 object ClanManager {
     private val clan: MongoCollection<ClanEntity> = MongoManager.clanCollection;
-    private val player: MongoCollection<PlayerEntity> = MongoManager.playerCollection;
+    private val playerManager: PlayerManager = PlayerManager;
     private val invites: InviteManager = InviteManager
     
     fun create(clan: ClanEntity, owner: Player) {
@@ -25,10 +25,7 @@ object ClanManager {
     
     fun delete(clan: ClanEntity){
         clan.members.forEach {
-            player.updateOne(
-                eq("_id", it),
-                set("clanId", null)
-            )
+            playerManager.setClan(it, null)
         }
         sendMessageToMembers(clan, "Clã esta sendo desfeito por ${PlayerManager.getPlayerById(clan.owner)?.name!!.bold()}".color(
             ChatColor.RED))
@@ -51,8 +48,9 @@ object ClanManager {
         val player = PlayerManager.getPlayerByMineId(owner.uniqueId)!!
         return this.clan.find(eq("owner", player._id)).first()
     }
-    fun getClanByMember(member: PlayerEntity):  ClanEntity?{
-        val clan  = this.clan.find(eq("members", member._id))
+    fun getClanByMember(member: Player):  ClanEntity?{
+        val playerEntity = PlayerManager.getPlayerEntityByPlayer(member)!!
+        val clan  = this.clan.find(eq("members", playerEntity._id))
         return clan.first()
     }
     fun getAllClans(): List<ClanEntity> {
@@ -71,6 +69,11 @@ object ClanManager {
     fun isOwner(player: Player, clanId: ObjectId): Boolean {
         val clan = this.getClanById(clanId)
         return player.uniqueId == clan?.owner
+    }
+    
+    fun isInClan(player: Player): Boolean {
+        val playerEntity = playerManager.getPlayerEntityByPlayer(player) ?: return false
+        return this.clan.find(eq("members", playerEntity._id)).first() != null
     }
     
     fun sendMessageToMembers(clan: ClanEntity, message: String) {
@@ -117,16 +120,25 @@ object ClanManager {
             pull("allies", clan._id)
         )
     }
+    
+    
     fun removeMember(clan: ClanEntity, member: PlayerEntity) {
         this.clan.updateOne(
             eq("_id", clan._id),
             pull("members", member._id)
         )
-        this.player.updateOne(
-            eq("_id", member._id),
-            set("clanId", null)
-        )
+        this.playerManager.setClan(member._id, null)
     }
+    
+    fun removeMember(member: Player){
+        val playerEntity = PlayerManager.getPlayerEntityByPlayer(member) ?: throw Exception("Erro")
+        this.clan.updateOne(
+            eq("_id", playerEntity._id),
+            pull("members", playerEntity._id)
+        )
+        this.playerManager.setClan(playerEntity._id, null)
+    }
+    
     fun removeEnemy(clan: ClanEntity, clanSender: ClanEntity) {
         this.clan.updateOne(
             eq("_id", clan._id),

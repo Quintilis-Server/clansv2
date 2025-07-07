@@ -39,6 +39,15 @@ object PlayerManager {
         }
     }
     
+    fun setClan(id: ObjectId, clan: ClanEntity?) {
+        if(this.exists(id)) {
+            this.player.updateOne(
+                eq("_id", id),
+                set("clanId", clan?._id)
+            )
+        }
+    }
+    
     fun exists(id: ObjectId): Boolean {
         return this.player.find(eq("_id", id)).first() != null
     }
@@ -53,13 +62,10 @@ object PlayerManager {
         return entity
     }
     
-    fun saveIfNotExists(entity: PlayerEntity) {
-        if (exists(entity._id!!)) {
-            entity
-        }else{
-            this.save(entity)
-        }
+    fun getPlayerEntityByPlayer(player: Player): PlayerEntity?{
+        return this.player.find(eq("mineId", player.uniqueId)).first()
     }
+    
     fun saveIfNotExists(entity: Player) {
         if (!exists(entity.uniqueId)) {
             Bukkit.getLogger().info("Colocando player na database")
