@@ -27,6 +27,6 @@ data class AllyInvite @BsonCreator constructor(
         return "Sender: ${ClanManager.getClanById(sender!!)!!.name.bold()} Data enviada: ${sendDate.toString().bold()}, Data de expiração: ${expireDate.toString().bold()}"
     }
     override fun toString(): String {
-        return "sender: $sender, receiver: $receiver, Data enviada: $sendDate, Data de expiração: $expireDate"
+        return "[sender: $sender, receiver: $receiver, Data enviada: $sendDate, Data de expiração: $expireDate],\n"
     }
 }

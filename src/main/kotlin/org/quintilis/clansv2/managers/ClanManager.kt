@@ -150,6 +150,15 @@ object ClanManager {
         )
     }
     
+    fun isAlly(clan: ClanEntity, ally: ClanEntity):Boolean {
+        val clanDoc =  this.clan.find(eq("_id", clan._id)).first()
+        val allyDoc = this.clan.find(eq("_id", ally._id)).first()
+        
+        if (clanDoc == null || allyDoc == null) return false
+        
+        return ally._id in clanDoc.allies && clan._id in allyDoc.allies
+    }
+    
     
     fun setName(name: String, clan: ClanEntity) {
         this.clan.updateOne(

@@ -37,7 +37,6 @@ class Clansv2 : JavaPlugin() {
             return
         }
         InviteManager.setConfig(
-            this.config.getInt("invite.ally.expiration"),
             this.config.getInt("invite.player.expiration")
         )
         

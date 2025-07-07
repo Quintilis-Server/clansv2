@@ -7,7 +7,6 @@ import org.bson.types.ObjectId
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
-import org.quintilis.clansv2.entities.AllyInvite
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.entities.Invite
 import org.quintilis.clansv2.entities.PlayerEntity
@@ -18,13 +17,10 @@ import java.util.Date
 
 object InviteManager {
     private val playerInvites = MongoManager.playerInviteCollection
-    private val alliesInvites = MongoManager.allyInviteCollection
     
-    private var allyExpirationHours: Int = 2;
     private var playerExpirationHours: Int = 1;
     
-    fun setConfig(allyExpirationHours: Int?, playerExpirationHours: Int?) {
-        this.allyExpirationHours = allyExpirationHours?:2
+    fun setConfig( playerExpirationHours: Int?) {
         this.playerExpirationHours = playerExpirationHours?:1
     }
     
@@ -96,68 +92,5 @@ object InviteManager {
             ),
             set("active", false)
         )
-//        playerInvites.deleteOne(and(eq("sender", receiverEntity._id), eq("clan", clan._id)))
     }
-    
-    //ally invite
-    
-    fun getAllyInvites() = alliesInvites.find().toList()
-    
-    fun addAllyInvite(sender: ClanEntity, receiver: ClanEntity) {
-        val invite = AllyInvite(
-            sender = sender._id, receiver = receiver._id, expireDate = Date(System.currentTimeMillis() + (allyExpirationHours * 60 * 60 * 1000)),
-        )
-        val receiverOwner = Bukkit.getPlayer(PlayerManager.getUUID(sender.owner))
-        alliesInvites.insertOne(invite)
-        receiverOwner?.sendMessage("O clã ${receiver.name.bold()} quer se aliar com você. use: \"${"/ally invite accept ${receiver.name}".bold()}\" para aceitar.")
-    }
-    
-    fun getAllyInvitesByReceiver(receiver: ClanEntity): List<AllyInvite> {
-        return alliesInvites.find(and(
-            eq("receiver", receiver._id),
-            eq("active", true)
-        )).toList()
-    }
-    
-    fun getAllyInvitesBySender(sender: ClanEntity): List<AllyInvite?> {
-        return alliesInvites.find(eq("sender", sender._id)).toList()
-    }
-    
-    
-    fun acceptAllyInvite(sender: ClanEntity, receiver: ClanEntity) {
-        
-//        val clanSender = ClanManager.getClanById(invite.sender!!)
-//        val clanReceiver = ClanManager.getClanById(invite.receiver!!)
-        
-        ClanManager.addAlly(sender, receiver)
-        
-//        clanCollection.findOneAndUpdate(eq("id", invite.sender), push("allies", invite.receiver))
-//        clanCollection.findOneAndUpdate(eq("id", invite.receiver), push("allies", invite.sender))
-        
-        for(member in sender.members) {
-            Bukkit.getPlayer(PlayerManager.getPlayerById(member)?.mineId!!)?.sendMessage("O seu clã se aliou ${receiver.name}.")
-        }
-        for(member in receiver.members) {
-            Bukkit.getPlayer(PlayerManager.getPlayerById(member)?.mineId!!)?.sendMessage("O seu clã se aliou ${sender.name}.")
-        }
-        alliesInvites.updateOne(
-            and(eq("sender", sender._id), eq("receiver", receiver._id)),
-            set("active", false),
-        )
-        alliesInvites.updateOne(
-            and(eq("sender", sender._id), eq("receiver", receiver._id)),
-            set("accepted", true),
-        )
-//        alliesInvites.deleteOne(and(eq("sender", sender._id), eq("receiver", receiver._id)))
-    }
-    
-    fun rejectAllyInvite(sender: ClanEntity, receiver: ClanEntity) {
-        Bukkit.getPlayer(PlayerManager.getUUID(sender.owner))?.sendMessage("A sua solicitação de aliação foi recusada.")
-        alliesInvites.updateOne(
-            and(eq("sender", sender._id), eq("receiver", receiver._id)),
-            set("active", false)
-        )
-//        alliesInvites.deleteOne(and(eq("sender", sender._id), eq("receiver", receiver._id)))
-    }
-    
 }

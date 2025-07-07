@@ -5,7 +5,8 @@ import org.quintilis.clansv2.commands.CommandInterface;
 public enum AllyInviteSubCommands implements CommandInterface {
     ACCEPT("accept", "/ally invite accept <clan>"),
     REJECT("reject", "/ally invite reject <clan>"),
-    SEND("send", "/ally invite send <clan>");
+    SEND("send", "/ally invite send <clan>"),
+    LIST("list", "/ally invite list"),;
     
     private final String command;
     private final String usage;
