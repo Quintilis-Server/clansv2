@@ -2,8 +2,6 @@ package org.quintilis.clansv2.commands
 
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
-import org.quintilis.clansv2.commands.ally.AllyCommands
 import org.quintilis.clansv2.string.bold
 import org.quintilis.clansv2.string.color
 
@@ -12,14 +10,13 @@ object CommandException {
         commandSender.sendMessage("You must be a player!".color(ChatColor.RED))
         return true
     }
-    fun sendAllUsage(commandSender: CommandSender, commands: Array<String>): Boolean {
-        var out = "";
-        for(command in commands) {
-            out += "${command.color(ChatColor.YELLOW).bold()}, "
-        }
-        commandSender.sendMessage(
-            "Uso: $out"
-        )
+    fun <T> sendAllUsage(commandSender: CommandSender, commands: Array<T>): Boolean where T: Enum<T>, T: CommandInterface{
+        val out = commands.joinToString(" | ".color(ChatColor.RESET)) { it.usage.color(ChatColor.YELLOW).bold() }
+        commandSender.sendMessage("Uso: $out")
+        return true
+    }
+    fun <T> sendUsage(commandSender: CommandSender, commands: T): Boolean where T: Enum<T>, T: CommandInterface {
+        commandSender.sendMessage("Uso: ${commands.usage.color(ChatColor.YELLOW).bold()}")
         return true
     }
     fun notClanLeader(commandSender: CommandSender): Boolean {
@@ -37,14 +34,13 @@ object CommandException {
         return true
     }
     
-    fun alreadyInClan(commandSender: CommandSender): Boolean {
-        commandSender.sendMessage("Você ja esta em um clã.".color(ChatColor.RED).bold())
-        return true
-    }
-    
     fun notInAClan(commandSender: CommandSender): Boolean {
         commandSender.sendMessage("Você não esta em um clã.".color(ChatColor.RED).bold())
         return true
     }
     
+    fun alreadyInClan(commandSender: CommandSender): Boolean {
+        commandSender.sendMessage("Você ja esta em um clã.".color(ChatColor.RED))
+        return true
+    }
 }

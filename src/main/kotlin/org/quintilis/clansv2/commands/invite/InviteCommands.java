@@ -1,6 +1,8 @@
 package org.quintilis.clansv2.commands.invite;
 
-public enum InviteCommands {
+import org.quintilis.clansv2.commands.CommandInterface;
+
+public enum InviteCommands implements CommandInterface {
     ACCEPT("accept", "/invite accept <clan>"),
     REJECT("reject", "/invite reject <clan>"),
     LIST("list", "/invite list");

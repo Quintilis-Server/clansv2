@@ -12,6 +12,7 @@ import org.quintilis.clansv2.commands.war.WarCommand
 import org.quintilis.clansv2.events.PlayerEventListener
 import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.MongoManager
+import org.quintilis.clansv2.string.color
 
 class Clansv2 : JavaPlugin() {
     
@@ -28,7 +29,13 @@ class Clansv2 : JavaPlugin() {
             ${config.getString("database.mongodb.uri")}
             """.trimIndent()
         )
-        MongoManager.connect(config.getString("database.mongodb.uri")!!)
+        if (!MongoManager.connect(config.getString("database.mongodb.uri")!!)) {
+            logger.severe("Falha ao conectar ao MongoDB. Desligando o servidor.".color(ChatColor.RED))
+            Bukkit.getScheduler().runTask(this, Runnable {
+                Bukkit.shutdown()
+            })
+            return
+        }
         InviteManager.setConfig(
             this.config.getInt("invite.ally.expiration"),
             this.config.getInt("invite.player.expiration")

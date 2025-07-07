@@ -1,6 +1,8 @@
 package org.quintilis.clansv2.commands.ally;
 
-public enum AllyListSubCommands {
+import org.quintilis.clansv2.commands.CommandInterface;
+
+public enum AllyListSubCommands implements CommandInterface {
     ALLIES("allies", "/ally list allies"),
     INVITES("invites", "/ally list invites"),;
     

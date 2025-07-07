@@ -23,6 +23,9 @@ class ClanCommand: CommandExecutor, TabExecutor {
         if(p0 !is Player) {
             return CommandException.notPlayer(p0)
         }
+        if(p3.isEmpty()) {
+            return CommandException.sendAllUsage(p0,ClanCommands.entries.toTypedArray())
+        }
         when(p3[0]){
             ClanCommands.CREATE.command -> create(p0, p3.sliceArray(1 until p3.size))
             ClanCommands.DELETE.command -> delete(p0)
@@ -33,16 +36,19 @@ class ClanCommand: CommandExecutor, TabExecutor {
                     ClanMemberSubCommands.INVITE.command -> sendInvite(p0, p3.sliceArray(2 until p3.size))
                     ClanMemberSubCommands.KICK.command -> kick(p0, p3.sliceArray(2 until p3.size))
                     ClanMemberSubCommands.LIST.command -> listMembers(p0, p3.sliceArray(2 until p3.size))
-                    else -> return CommandException.sendAllUsage(p0, ClanMemberSubCommands.entries.map { it.usage }.toTypedArray())
+                    else -> return CommandException.sendAllUsage(p0, ClanMemberSubCommands.entries.toTypedArray())
                 }
             }
-            else -> return CommandException.sendAllUsage(p0, ClanCommands.entries.map { it.usage }.toTypedArray())
+            else -> return CommandException.sendAllUsage(p0, ClanCommands.entries.toTypedArray())
         }
         return true
     }
     
     override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<String?>): List<String?>? {
         val clan = ClanManager.getClanByOwner(p0 as Player)
+//        if(clan == null){
+//
+//        }
         return when(p3.size){
             1->{
                 ClanCommands.entries.map { it.command }
@@ -74,7 +80,6 @@ class ClanCommand: CommandExecutor, TabExecutor {
                 }else{
                     return ClanManager.getAllClans().map { it.name }
                 }
-                return emptyList()
             }
             else -> emptyList()
         }
@@ -84,7 +89,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
     private fun create(commandSender: CommandSender, args: Array<String>) {
         
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(ClanCommands.CREATE.usage))
+            CommandException.sendUsage(commandSender, ClanCommands.CREATE)
             return
         }
         
@@ -150,7 +155,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
         
         val setValue = args.getOrNull(1)
         if(setValue == null) {
-            CommandException.sendAllUsage(commandSender, ClanSetSubCommands.entries.map { it.usage }.toTypedArray())
+            CommandException.sendAllUsage(commandSender, ClanSetSubCommands.entries.toTypedArray())
             return
         }
         
@@ -158,7 +163,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
             ClanSetSubCommands.NAME.command -> ClanManager.setName(setValue, clan)
             ClanSetSubCommands.TAG.command -> ClanManager.setTag(setValue, clan)
             else -> {
-                CommandException.sendAllUsage(commandSender, ClanSetSubCommands.entries.map { it.usage }.toTypedArray())
+                CommandException.sendAllUsage(commandSender, ClanSetSubCommands.entries.toTypedArray())
                 return
             }
         }
@@ -175,7 +180,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
         }
         
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(ClanMemberSubCommands.KICK.usage))
+            CommandException.sendUsage(commandSender, ClanMemberSubCommands.KICK)
             return
         }
         
@@ -202,7 +207,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
         }
         
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(ClanMemberSubCommands.INVITE.usage))
+            CommandException.sendUsage(commandSender, ClanMemberSubCommands.INVITE)
             return
         }
         

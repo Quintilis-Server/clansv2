@@ -19,7 +19,7 @@ class WarCommand: CommandExecutor, TabCompleter {
             return CommandException.notPlayer(p0)
         }
         if(p3.isEmpty()) {
-            return CommandException.sendAllUsage(p0, WarCommandsEnum.entries.map { it.usage }.toTypedArray())
+            return CommandException.sendAllUsage(p0, WarCommandsEnum.entries.toTypedArray())
         }
         if(!ClanManager.isOwner(p0)){
             return CommandException.notClanLeader(p0)
@@ -33,7 +33,7 @@ class WarCommand: CommandExecutor, TabCompleter {
     
     private fun declare(commandSender: CommandSender, args: Array<String>) {
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(WarCommandsEnum.DECLARE.usage))
+            CommandException.sendUsage(commandSender, WarCommandsEnum.DECLARE)
             return
         }
         

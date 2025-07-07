@@ -1,6 +1,8 @@
 package org.quintilis.clansv2.commands.ally;
 
-public enum AllyCommands {
+import org.quintilis.clansv2.commands.CommandInterface;
+
+public enum AllyCommands implements CommandInterface {
     INVITE("invite", "/ally invite <send|accept|reject> <clan>"),
     LIST("list", "/ally list <invites|allies>"),
     REMOVE("remove", "/ally remove <clan>");

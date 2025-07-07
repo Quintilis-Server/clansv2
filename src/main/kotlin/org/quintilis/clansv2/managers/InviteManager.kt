@@ -47,6 +47,7 @@ object InviteManager {
         
         Bukkit.getPlayer(receiver.mineId)?.sendMessage("O clã ${clan.name} quer te convidar para se unir. use:" + "\"/invite accept ${clan.name}\"".bold().color(
             ChatColor.YELLOW) + " para aceitar.")
+        playerInvites.insertOne(invite)
     }
     
     fun getPlayerInvitesByReceiver(receiver: PlayerEntity): List<Invite> {
@@ -112,7 +113,10 @@ object InviteManager {
     }
     
     fun getAllyInvitesByReceiver(receiver: ClanEntity): List<AllyInvite> {
-        return alliesInvites.find(eq("receiver", receiver._id)).toList()
+        return alliesInvites.find(and(
+            eq("receiver", receiver._id),
+            eq("active", true)
+        )).toList()
     }
     
     fun getAllyInvitesBySender(sender: ClanEntity): List<AllyInvite?> {

@@ -1,6 +1,8 @@
 package org.quintilis.clansv2.commands.clan;
 
-public enum ClanSetSubCommands {
+import org.quintilis.clansv2.commands.CommandInterface;
+
+public enum ClanSetSubCommands implements CommandInterface {
     TAG("tag","/clan set tag <tag>"),
     NAME("name","/clan set name <name>"),;
     

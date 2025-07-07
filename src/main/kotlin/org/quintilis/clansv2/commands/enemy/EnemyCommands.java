@@ -1,6 +1,8 @@
 package org.quintilis.clansv2.commands.enemy;
 
-public enum EnemyCommands {
+import org.quintilis.clansv2.commands.CommandInterface;
+
+public enum EnemyCommands implements CommandInterface {
     LIST("list", "/enemy list"),
     REMOVE("remove", "/enemy remove <clan>");
 

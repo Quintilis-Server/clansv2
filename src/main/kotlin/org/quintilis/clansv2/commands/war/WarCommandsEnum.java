@@ -1,6 +1,8 @@
 package org.quintilis.clansv2.commands.war;
 
-public enum WarCommandsEnum {
+import org.quintilis.clansv2.commands.CommandInterface;
+
+public enum WarCommandsEnum implements CommandInterface {
     DECLARE("declare", "/war declare <clan>"),;
 
     private final String command;

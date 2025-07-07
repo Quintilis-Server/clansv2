@@ -1,11 +1,14 @@
 package org.quintilis.clansv2.commands.clan;
 
-public enum ClanCommands {
+import org.quintilis.clansv2.commands.CommandInterface;
+
+public enum ClanCommands implements CommandInterface {
     CREATE("create", "/clan create <name> <tag>"),
     DELETE("delete", "/clan delete"),
     LIST("list", "/clan list"),
     SET("set", "/clan set <field> <value>"),
-    MEMBER("member", "/clan member <invite|kick|list>");
+    MEMBER("member", "/clan member <invite|kick|list>"),
+    QUIT("quit", "/clan quit");
 
     private final String command;
     private final String usage;

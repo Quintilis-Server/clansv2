@@ -18,7 +18,7 @@ class EnemyCommand: CommandExecutor, TabCompleter {
             return CommandException.notPlayer(p0)
         }
         if(p3.isEmpty()) {
-            return CommandException.sendAllUsage(p0, EnemyCommands.entries.map { it.usage }.toTypedArray())
+            return CommandException.sendAllUsage(p0, EnemyCommands.entries.toTypedArray())
         }
         
         if(!ClanManager.isOwner(p0)){
@@ -37,7 +37,7 @@ class EnemyCommand: CommandExecutor, TabCompleter {
     
     private fun remove(commandSender: CommandSender, args: Array<out String>) {
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(EnemyCommands.REMOVE.usage))
+            CommandException.sendUsage(commandSender, EnemyCommands.REMOVE)
             return
         }
         

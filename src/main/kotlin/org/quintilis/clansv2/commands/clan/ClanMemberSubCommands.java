@@ -1,6 +1,8 @@
 package org.quintilis.clansv2.commands.clan;
 
-public enum ClanMemberSubCommands {
+import org.quintilis.clansv2.commands.CommandInterface;
+
+public enum ClanMemberSubCommands implements CommandInterface {
     KICK("kick", "/clan member kick <player>"),
     INVITE("invite", "/clan member invite <player>"),
     LIST("list", "/clan member list");

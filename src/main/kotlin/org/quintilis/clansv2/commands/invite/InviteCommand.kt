@@ -21,7 +21,7 @@ class InviteCommand: CommandExecutor, TabCompleter {
         }
         
         if(p3.isEmpty()) {
-            return CommandException.sendAllUsage(p0, InviteCommands.entries.map { it.usage }.toTypedArray())
+            return CommandException.sendAllUsage(p0, InviteCommands.entries.toTypedArray())
         }
         
         when(p3[0]) {
@@ -34,13 +34,18 @@ class InviteCommand: CommandExecutor, TabCompleter {
     
     private fun accept(commandSender: Player, args: Array<String>) {
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(InviteCommands.ACCEPT.usage))
+            CommandException.sendUsage(commandSender, InviteCommands.ACCEPT)
             return
         }
         
         val clan = ClanManager.getClanByName(args[0])
         if(clan == null) {
             CommandException.notFound(commandSender, "clã")
+            return
+        }
+        if(PlayerManager.getPlayerByMineId(commandSender.uniqueId)!!.clanId != null) {
+            CommandException.alreadyInClan(commandSender)
+            InviteManager.rejectInvite(commandSender, clan = clan)
             return
         }
         
@@ -55,7 +60,7 @@ class InviteCommand: CommandExecutor, TabCompleter {
     
     private fun reject(commandSender: Player, args: Array<String>) {
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(InviteCommands.REJECT.usage))
+            CommandException.sendUsage(commandSender, InviteCommands.REJECT)
             return
         }
         

@@ -22,7 +22,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
         }
         
         if(p3.isEmpty()) {
-            return CommandException.sendAllUsage(p0, AllyCommands.entries.map { it.usage }.toTypedArray())
+            return CommandException.sendAllUsage(p0, AllyCommands.entries.toTypedArray())
         }
         
         when(p3[0]){
@@ -59,14 +59,14 @@ class AllyCommand: CommandExecutor, TabCompleter {
                 commandSender.sendMessage("Alianças (${allies.size}):".color(ChatColor.YELLOW))
                 commandSender.sendMessage(allies.map { it.name }.joinToString {", \n"})
             }
-            else -> CommandException.sendAllUsage(commandSender, AllyListSubCommands.entries.map { it.usage }.toTypedArray())
+            else -> CommandException.sendAllUsage(commandSender, AllyListSubCommands.entries.toTypedArray())
         }
         
     }
     
     private fun accept(commandSender: CommandSender, args: Array<String>) {
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(AllyInviteSubCommands.ACCEPT.usage))
+            CommandException.sendUsage(commandSender, AllyInviteSubCommands.ACCEPT)
             return
         }
         val clan = ClanManager.getClanByOwner(commandSender as Player)
@@ -89,7 +89,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
     
     private fun reject(commandSender: CommandSender, args: Array<String>) {
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(AllyInviteSubCommands.REJECT.usage))
+            CommandException.sendUsage(commandSender, AllyInviteSubCommands.REJECT)
             return
         }
         
@@ -113,7 +113,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
     
     private fun send(commandSender: CommandSender, args: Array<String>) {
         if (args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(AllyInviteSubCommands.SEND.usage))
+            CommandException.sendUsage(commandSender, AllyInviteSubCommands.SEND)
             return
         }
         
@@ -136,7 +136,7 @@ class AllyCommand: CommandExecutor, TabCompleter {
     
     private fun remove(commandSender: CommandSender, args: Array<String>) {
         if(args.isEmpty()) {
-            CommandException.sendAllUsage(commandSender, arrayOf(AllyCommands.REMOVE.usage))
+            CommandException.sendUsage(commandSender, AllyCommands.REMOVE)
             return
         }
         
