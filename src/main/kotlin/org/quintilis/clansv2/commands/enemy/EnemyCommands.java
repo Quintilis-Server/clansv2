@@ -4,7 +4,8 @@ import org.quintilis.clansv2.commands.CommandInterface;
 
 public enum EnemyCommands implements CommandInterface {
     LIST("list", "/enemy list"),
-    REMOVE("remove", "/enemy remove <clan>");
+    REMOVE("remove", "/enemy remove <clan>"),
+    DECLARE("declare", "/enemy declare <clan>");
 
     private final String command;
     private final String usage;

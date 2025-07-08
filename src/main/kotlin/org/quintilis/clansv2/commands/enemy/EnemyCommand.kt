@@ -11,6 +11,8 @@ import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.EnemyManager
 import org.quintilis.clansv2.string.bold
+import org.quintilis.clansv2.string.color
+import org.quintilis.clansv2.string.italic
 
 class EnemyCommand: CommandExecutor, TabCompleter {
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<String>): Boolean {
@@ -30,6 +32,10 @@ class EnemyCommand: CommandExecutor, TabCompleter {
                 p0.sendMessage(EnemyManager.list(p0).joinToString(", ") { it.name })
             }
             EnemyCommands.REMOVE.command -> remove(p0,p3.sliceArray(1 until p3.size))
+            EnemyCommands.DECLARE.command -> declare(p0,p3.sliceArray(1 until p3.size))
+            else -> {
+                CommandException.sendAllUsage(p0, EnemyCommands.entries.toTypedArray())
+            }
         }
         
         return true;
@@ -54,6 +60,38 @@ class EnemyCommand: CommandExecutor, TabCompleter {
         ClanManager.sendMessageToMembers(clan,"${clan.name.bold()} fez as pazes com o clã ${clanSender.name.bold()}")
         ClanManager.sendMessageToMembers(clanSender,"${clanSender.name.bold()} fez as pazes com o clã ${clan.name.bold()}")
     }
+    
+    private fun declare(commandSender: CommandSender, args: Array<String>) {
+        if(args.isEmpty()) {
+            CommandException.sendUsage(commandSender, EnemyCommands.DECLARE)
+            return
+        }
+        
+        val clan = ClanManager.getClanByName(args[0])
+        if(clan == null) {
+            CommandException.notFound(commandSender,"clã")
+            return
+        }
+        val clanSender = ClanManager.getClanByOwner(commandSender as Player)
+        if(clanSender == null) {
+            CommandException.notClanLeader(commandSender)
+            return
+        }
+        if(clan.allies.contains(clanSender._id) || clanSender.enemies.contains(clan._id)) {
+            if (args.size < 2 || !args[1].equals("sim", ignoreCase = true)) {
+                commandSender.sendMessage(
+                    "Os clãs são aliados! " +
+                            "Se tiver certeza, repita o comando para ${"realizar o ato hediondo".bold().italic().color(ChatColor.DARK_RED)}:\n" +
+                            "/ally remove ${clan.name}".color(ChatColor.YELLOW)
+                )
+                return
+            }
+        }
+        
+        EnemyManager.add(clan,commandSender)
+    }
+    
+    
     
     override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<out String?>): List<String?>? {
         if(p3.size == 1) {

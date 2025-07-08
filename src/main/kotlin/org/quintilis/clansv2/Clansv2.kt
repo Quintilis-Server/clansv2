@@ -47,7 +47,7 @@ class Clansv2 : JavaPlugin() {
         this.getCommand("clan")?.setExecutor(ClanCommand())
         this.getCommand("ally")?.setExecutor(AllyCommand())
         this.getCommand("enemy")?.setExecutor(EnemyCommand())
-        this.getCommand("war")?.setExecutor(WarCommand())
+//        this.getCommand("war")?.setExecutor(WarCommand())
         this.getCommand("invite")?.setExecutor(InviteCommand())
     }
     

@@ -12,9 +12,9 @@ commands:
   enemy:
     description: "Comando para inimigos §4MORTAIS§f, para ver os usos é so escrever /enemy"
     usage: /enemy
-  war:
-    description: "Comando para §4DECLARAR GUERRA§f, para ver os usos é so escrever /war"
-    usage: /war
+#  war:
+#    description: "Comando para §4DECLARAR GUERRA§f, para ver os usos é so escrever /war"
+#    usage: /war
   invite:
     description: "Comando para aceitar ou rejeitar pedidos de junção a clãs, para ver os usos é só escrever /invite"
     usage: /invite
