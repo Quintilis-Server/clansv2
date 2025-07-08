@@ -71,7 +71,7 @@ class InviteCommand: CommandExecutor, TabCompleter {
         }
         
         InviteManager.rejectInvite(commandSender, clan)
-        commandSender.sendMessage("Convite recusado".italic())
+        commandSender.sendMessage("Convite recusado".italic().bold())
     }
     
     private fun list(commandSender: CommandSender){
@@ -80,22 +80,18 @@ class InviteCommand: CommandExecutor, TabCompleter {
     }
     
     override fun onTabComplete(p0: CommandSender, p1: Command, p2: String, p3: Array<out String?>): List<String>? {
+        val playerEntity = PlayerManager.getPlayerEntityByPlayer(p0 as Player)!!
         return when(p3.size) {
             1 -> InviteCommands.entries.map { it.command }
             2 -> when(p3[0]?.lowercase()) {
-                InviteCommands.ACCEPT.command -> listInvites(p0).map { it.name }
+                InviteCommands.ACCEPT.command -> {
+                    InviteManager.getPlayerInvitesByReceiver(playerEntity).map{ ClanManager.getClanById(it.clan)?.name!!}
+                }
                 InviteCommands.REJECT.command -> listOf()
                 else -> listOf()
             }
             else -> listOf()
         }
-    }
-    
-    private fun listInvites(commandSender: CommandSender): List<ClanEntity>{
-        return InviteManager.getPlayerInvitesByReceiver(PlayerManager.getPlayerByMineId((commandSender as Player).uniqueId)!!)
-            .map {
-                ClanManager.getClanById(it.clan!!)!!
-            }
     }
     
 }
