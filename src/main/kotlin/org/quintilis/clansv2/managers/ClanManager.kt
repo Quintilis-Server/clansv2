@@ -76,6 +76,10 @@ object ClanManager {
         return this.clan.find(eq("members", playerEntity._id)).first() != null
     }
     
+//    fun isInClan(player: Player){
+//
+//    }
+    
     fun sendMessageToMembers(clan: ClanEntity, message: String) {
         clan.members.forEach {
             Bukkit.getPlayer(PlayerManager.getPlayerById(it)?.mineId!!)?.sendMessage(message)
@@ -172,5 +176,9 @@ object ClanManager {
             eq("_id", clan._id),
             set("tag", tag)
         )
+    }
+    
+    fun save(clan: ClanEntity) {
+        this.clan.replaceOne(eq("_id", clan._id), clan)
     }
 }

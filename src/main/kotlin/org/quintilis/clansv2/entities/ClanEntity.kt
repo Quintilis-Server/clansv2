@@ -54,4 +54,8 @@ data class ClanEntity @BsonCreator constructor(
         ClanManager.setTag(tag, this)
     }
     
+    fun save(): ClanEntity {
+        ClanManager.save(this)
+        return this
+    }
 }
