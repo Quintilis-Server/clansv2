@@ -7,7 +7,7 @@ invites:
   player:
     expiration: 1
 
-points:
+killPoints:
   noEnemy: 5
   enemy: 10
   ally: 0

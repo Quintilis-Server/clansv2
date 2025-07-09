@@ -9,7 +9,10 @@ import org.quintilis.clansv2.commands.clan.ClanCommands
 import org.quintilis.clansv2.commands.enemy.EnemyCommand
 import org.quintilis.clansv2.commands.invite.InviteCommand
 import org.quintilis.clansv2.commands.war.WarCommand
+import org.quintilis.clansv2.events.DeathEventListener
 import org.quintilis.clansv2.events.PlayerEventListener
+import org.quintilis.clansv2.managers.AllyInviteManager
+import org.quintilis.clansv2.managers.ConfigManager
 import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.MongoManager
 import org.quintilis.clansv2.string.color
@@ -17,6 +20,8 @@ import org.quintilis.clansv2.string.color
 class Clansv2 : JavaPlugin() {
     
     private val logger = Bukkit.getLogger()
+    private val configManager = ConfigManager(this.config)
+    
     
     override fun onEnable() {
         logger.info("Clansv2 is enabled!")
@@ -26,10 +31,10 @@ class Clansv2 : JavaPlugin() {
         logger.info(
             """
             Configuration loaded:
-            ${config.getString("database.mongodb.uri")}
+            ${configManager.databaseURI}
             """.trimIndent()
         )
-        if (!MongoManager.connect(config.getString("database.mongodb.uri")!!)) {
+        if (!MongoManager.connect(configManager.databaseURI)) {
             logger.severe("Falha ao conectar ao MongoDB. Desligando o servidor.".color(ChatColor.RED))
             Bukkit.getScheduler().runTask(this, Runnable {
                 Bukkit.shutdown()
@@ -37,11 +42,15 @@ class Clansv2 : JavaPlugin() {
             return
         }
         InviteManager.setConfig(
-            this.config.getInt("invite.player.expiration")
+            configManager.playerInviteExpirationHours
+        )
+        AllyInviteManager.setConfig(
+            configManager.allyInviteExpirationHours,
         )
         
-        Bukkit.getPluginManager().registerEvents(PlayerEventListener(), this)
         
+        Bukkit.getPluginManager().registerEvents(PlayerEventListener(), this)
+        Bukkit.getPluginManager().registerEvents(DeathEventListener(configManager), this)
         
         //comandos
         this.getCommand("clan")?.setExecutor(ClanCommand())
