@@ -6,15 +6,11 @@ It also features a points system to show who has killed the most people in the w
 
 The plugin was designed for use on the "Quintilis" war server, and this is the second version of the code. Even though it's for "Quintilis," anyone can use it on their own server.
 
---- 
-
 ## Installation
 
 - First you'll need [mongodb](https://www.mongodb.com/) with a valid URI, and [LuckPerms](https://luckperms.net/).
 - Add the plugin to the `plugins` folder on your server and start the server to generate the `config.yml` file.
 - In the `config.yml` file you edit the `database.mongodb.uri` and put the URI for the Mongo database.
-
----
 
 ## Commands
 
@@ -22,7 +18,6 @@ For all the commands you can type `/<name of the command>` for all the usages.
 
 ### Clan commands
 
----
 #### `/clan create <name>`
 * Only the player can run this command, it can run like `/clan create <name> <tag>` or only `/clan create <name>`
 * The player running this command will be the de owner of the clan.
@@ -61,8 +56,6 @@ In the future I plan to add a history to the plugin, for the offline players.
 
 ### AllyCommands
 
----
-
 ***Only the owners can run these commands***
 
 #### `/ally list`
@@ -87,8 +80,6 @@ In the future I plan to add a history to the plugin, for the offline players.
 
 ***Only the owners can run these commands***
 
----
-
 #### `/enemy list`
 * Lists all enemies from your clan.
 
@@ -102,8 +93,6 @@ In the future I plan to add a history to the plugin, for the offline players.
 
 ***Only members can run these commands.***
 
----
-
 #### `/invite list`
 * Lists all invitations.
 
@@ -112,7 +101,6 @@ In the future I plan to add a history to the plugin, for the offline players.
 
 #### `/invite reject <clan>`
 * Reject an invitation to a clan.
----
 
 ## Contributing
 
