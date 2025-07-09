@@ -119,6 +119,6 @@ Thank you for helping improve the project!
 
 ## License
 
-This project is licensed under the [CC BY-NC 4.0 License](https://creativecommons.org/licenses/by-nc/4.0/).
+This project is licensed under the [MIT License](./LICENSE).  
 
-You can use, modify and share it freely — just don’t use it for commercial purposes.
+You can use, modify, and distribute it freely — even commercially — as long as you include the original license.
