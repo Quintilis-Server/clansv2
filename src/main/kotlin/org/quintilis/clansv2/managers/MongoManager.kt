@@ -66,7 +66,9 @@ object MongoManager {
     }
     
     fun close() {
-        mongoClient.close()
+        mongoClient?.let {
+            mongoClient.close()
+        }
     }
     
     

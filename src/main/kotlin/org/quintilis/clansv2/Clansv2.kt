@@ -1,21 +1,23 @@
 package org.quintilis.clansv2
 
+import net.luckperms.api.LuckPerms
+import net.luckperms.api.LuckPermsProvider
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
 import org.quintilis.clansv2.commands.ally.AllyCommand
 import org.quintilis.clansv2.commands.clan.ClanCommand
-import org.quintilis.clansv2.commands.clan.ClanCommands
 import org.quintilis.clansv2.commands.enemy.EnemyCommand
 import org.quintilis.clansv2.commands.invite.InviteCommand
-import org.quintilis.clansv2.commands.war.WarCommand
 import org.quintilis.clansv2.events.DeathEventListener
 import org.quintilis.clansv2.events.PlayerEventListener
+import org.quintilis.clansv2.luckperms.LuckPermsInitializer
 import org.quintilis.clansv2.managers.AllyInviteManager
 import org.quintilis.clansv2.managers.ConfigManager
 import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.MongoManager
 import org.quintilis.clansv2.string.color
+
 
 class Clansv2 : JavaPlugin() {
     
@@ -34,12 +36,25 @@ class Clansv2 : JavaPlugin() {
             ${configManager.databaseURI}
             """.trimIndent()
         )
+        
+        val lpApi = try {
+            LuckPermsProvider.get()
+        } catch (ex: IllegalStateException) {
+            logger.severe { ex.message }
+            logger.warning("LuckPerms não disponível neste momento.")
+            null
+        }
+        
         if (!MongoManager.connect(configManager.databaseURI)) {
             logger.severe("Falha ao conectar ao MongoDB. Desligando o servidor.".color(ChatColor.RED))
             Bukkit.getScheduler().runTask(this, Runnable {
                 Bukkit.shutdown()
             })
             return
+        }
+        lpApi?.let {
+            logger.info("LuckPerms encontrado via LuckPermsProvider → iniciando integração.")
+            LuckPermsInitializer(this, it).initialize()
         }
         InviteManager.setConfig(
             configManager.playerInviteExpirationHours

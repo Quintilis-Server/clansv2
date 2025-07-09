@@ -18,3 +18,4 @@ commands:
   invite:
     description: "Comando para aceitar ou rejeitar pedidos de junção a clãs, para ver os usos é só escrever /invite"
     usage: /invite
+depend: [LuckPerms]
