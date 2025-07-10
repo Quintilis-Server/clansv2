@@ -26,20 +26,20 @@ class ClanCommand: CommandExecutor, TabExecutor {
             return CommandException.sendAllUsage(p0,ClanCommands.entries.toTypedArray())
         }
         when(p3[0]){
-            ClanCommands.CREATE.command -> create(p0, p3.sliceArray(1 until p3.size))
-            ClanCommands.DELETE.command -> delete(p0)
-            ClanCommands.LIST.command -> list(p0)
-            ClanCommands.SET.command -> set(p0, p3.sliceArray(1 until p3.size))
-            ClanCommands.QUIT.command -> quit(p0)
+            ClanCommands.CREATE.command -> this.create(p0, p3.sliceArray(1 until p3.size))
+            ClanCommands.DELETE.command -> this.delete(p0)
+            ClanCommands.LIST.command -> this.list(p0)
+            ClanCommands.SET.command -> this.set(p0, p3.sliceArray(1 until p3.size))
+            ClanCommands.QUIT.command -> this.quit(p0)
             ClanCommands.MEMBER.command -> {
                 val newArray = p3.sliceArray(1 until p3.size)
                 if(newArray.isEmpty()) {
                     return CommandException.sendAllUsage(p0, ClanMemberSubCommands.entries.toTypedArray())
                 }
                 when(p3[1]){
-                    ClanMemberSubCommands.INVITE.command -> sendInvite(p0, p3.sliceArray(2 until p3.size))
-                    ClanMemberSubCommands.KICK.command -> kick(p0, p3.sliceArray(2 until p3.size))
-                    ClanMemberSubCommands.LIST.command -> listMembers(p0, p3.sliceArray(2 until p3.size))
+                    ClanMemberSubCommands.INVITE.command -> this.sendInvite(p0, p3.sliceArray(2 until p3.size))
+                    ClanMemberSubCommands.KICK.command -> this.kick(p0, p3.sliceArray(2 until p3.size))
+                    ClanMemberSubCommands.LIST.command -> this.listMembers(p0, p3.sliceArray(2 until p3.size))
                     else -> return CommandException.sendAllUsage(p0, ClanMemberSubCommands.entries.toTypedArray())
                 }
             }
@@ -122,6 +122,7 @@ class ClanCommand: CommandExecutor, TabExecutor {
         }
         
         val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender).uniqueId)!!._id, _id = ObjectId())
+        oio
         ClanManager.create(clan,commandSender)
         
         commandSender.sendMessage("Clã ${clan.name} criado com sucesso!")
