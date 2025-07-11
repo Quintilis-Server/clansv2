@@ -4,9 +4,11 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.quintilis.clansv2.entities.ClanEntity
+import org.quintilis.clansv2.entities.DeathEntity
 import org.quintilis.clansv2.entities.PlayerEntity
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.ConfigManager
+import org.quintilis.clansv2.managers.DeathManager
 import org.quintilis.clansv2.managers.PlayerManager
 
 class DeathEventListener(
@@ -24,36 +26,70 @@ class DeathEventListener(
             killerEntity = PlayerManager.saveIfNotExists(killer)!!
         }
         
+        val deathEntity = DeathEntity(
+            victim = victimEntity._id,
+            killer = killerEntity._id
+        )
+        
         val victimClan = ClanManager.getClanByMember(victim)
         val killerClan = ClanManager.getClanByMember(killer)
         
         //somente se algum dos envolvidos não tem clã
         //depois desse if os clãs não são null, mesmo que a IDE fale o contrario
         if(victimClan == null||killerClan == null) {
-            stealPoints(killerEntity, victimEntity, configManager.noEnemyKillPoints)
+            stealPoints(
+                killerEntity,
+                victimEntity,
+                adicionalPoints = configManager.noEnemyKillPoints)
             if(victimClan != null){
                 ClanManager.updateClanPoints(victimClan)
             }else if(killerClan != null){
                 ClanManager.updateClanPoints(killerClan)
             }
+            DeathManager.save(deathEntity)
             return
         }
         
         //somente se os clãs são aliados
         if(ClanManager.isAlly(victimClan,killerClan)){
-            stealPoints(killerEntity,victimEntity,configManager.allyKillPoints)
+            stealPoints(
+                killerEntity,
+                victimEntity,
+                adicionalPoints = configManager.allyKillPoints)
+            deathEntity.isAlly = true;
+            DeathManager.save(deathEntity)
             updateClanPoints(victimClan,killerClan)
             return;
         }
         
         //somente se o clã for o mesmo
         if(victimClan == killerClan) {
+            deathEntity.sameClan = true;
+            DeathManager.save(deathEntity)
             updateClanPoints(victimClan,killerClan)
             return;
         }
         
+        //somente se os clãs são inimigos
+        if(ClanManager.isEnemy(victimClan,killerClan)){
+            stealPoints(
+                killerEntity,
+                victimEntity,
+                adicionalPoints = configManager.enemyKillPoints
+            )
+            deathEntity.isEnemy = true;
+            DeathManager.save(deathEntity)
+            updateClanPoints(victimClan,killerClan)
+            return
+        }
+        
         //somente se os clãs nao sao inimigos
-        stealPoints(killerEntity,victimEntity, configManager.noEnemyKillPoints)
+        stealPoints(
+            killerEntity,
+            victimEntity,
+            adicionalPoints = configManager.noEnemyKillPoints
+        )
+        DeathManager.save(deathEntity)
         updateClanPoints(victimClan,killerClan)
     }
     
