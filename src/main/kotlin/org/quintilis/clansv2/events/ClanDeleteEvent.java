@@ -10,11 +10,4 @@ public class ClanDeleteEvent extends ClanEvent {
     public ClanDeleteEvent(@NotNull ClanEntity clan, @NotNull Player player) {
         super(player, clan);
     }
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers(){
-        return HANDLERS;
-    }
-
 }

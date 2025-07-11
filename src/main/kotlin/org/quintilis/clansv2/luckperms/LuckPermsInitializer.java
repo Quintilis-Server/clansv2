@@ -7,23 +7,22 @@ import net.luckperms.api.node.Node;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.node.types.PermissionNode;
 import net.luckperms.api.node.types.PrefixNode;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.quintilis.clansv2.Clansv2;
 import org.quintilis.clansv2.managers.ClanManager;
 
-import java.util.Objects;
 import java.util.logging.Logger;
 
 public class LuckPermsInitializer {
-    private final LuckPerms luckPerms;
+//    private final LuckPerms luckPerms;
     private final GroupManager groupManager;
     private final Logger logger;
+    private final LuckPermsManager luckPermsManager;
 
-    public LuckPermsInitializer(Clansv2 clansv2, LuckPerms luckPerms) {
+    public LuckPermsInitializer(Clansv2 clansv2, LuckPerms luckPerms, LuckPermsManager luckPermsManager) {
         this.logger = clansv2.getLogger();
-        this.luckPerms = luckPerms;
+//        this.luckPerms = luckPerms;
         this.groupManager = luckPerms.getGroupManager();
+        this.luckPermsManager = luckPermsManager;
     }
 
     public void initialize() {
@@ -43,25 +42,23 @@ public class LuckPermsInitializer {
                 group.data().add(prefixNode);
             }
             switch (role){
-                case PLAYER:
-                    Node groupPermissions = PermissionNode.builder("clansv2.use").build();
-                    group.data().add(groupPermissions);
-                    break;
                 case MOD:
-                    Node inheritancePlayer = InheritanceNode.builder("PLAYER").build();
-                    group.data().add(inheritancePlayer);
-
-                    group.data().add(PermissionNode.builder("clansv2.mod").build());
+                    group.data().add(luckPermsManager.createInheritanceNode(LuckPermsBaseRoles.PLAYER));
+                    for(PermissionNode node : luckPermsManager.createPermissionNodes(LuckPermsBaseRoles.MOD)){
+                        group.data().add(node);
+                    }
                     break;
                 case ADM:
-                    Node inheritancePlayer2 = InheritanceNode.builder("PLAYER").build();
-                    group.data().add(inheritancePlayer2);
-
-                    group.data().add(PermissionNode.builder("clansv2.admin").build());
-                    group.data().add(PermissionNode.builder("luckperms.group.info").build());
-                    group.data().add(PermissionNode.builder("luckperms.user.permission.set").build());
+                    group.data().add(luckPermsManager.createInheritanceNode(LuckPermsBaseRoles.PLAYER));
+                    group.data().add(luckPermsManager.createInheritanceNode(LuckPermsBaseRoles.MOD));
+                    for(PermissionNode node : luckPermsManager.createPermissionNodes(LuckPermsBaseRoles.ADM)){
+                        group.data().add(node);
+                    }
                     break;
                 default:
+                    for(PermissionNode node : luckPermsManager.createPermissionNodes(LuckPermsBaseRoles.PLAYER)){
+                        group.data().add(node);
+                    }
                     break;
             }
             this.groupManager.saveGroup(group);

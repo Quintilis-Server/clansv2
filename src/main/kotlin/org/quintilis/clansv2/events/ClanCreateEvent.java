@@ -7,14 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.quintilis.clansv2.entities.ClanEntity;
 
 public class ClanCreateEvent extends ClanEvent {
-
     public ClanCreateEvent(Player player, ClanEntity clan) {
         super(player, clan);
-    }
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
     }
 }

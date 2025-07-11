@@ -13,7 +13,7 @@ class ClanEventListener(
     
     @EventHandler
     fun onClanCreate(event: ClanCreateEvent) {
-    
+        luckPermsManager.createGroupFromClan(event.clan)
     }
     
     @EventHandler

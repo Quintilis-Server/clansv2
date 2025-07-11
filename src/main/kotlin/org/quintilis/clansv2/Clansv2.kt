@@ -12,6 +12,7 @@ import org.quintilis.clansv2.commands.invite.InviteCommand
 import org.quintilis.clansv2.events.DeathEventListener
 import org.quintilis.clansv2.events.PlayerEventListener
 import org.quintilis.clansv2.luckperms.LuckPermsInitializer
+import org.quintilis.clansv2.luckperms.LuckPermsManager
 import org.quintilis.clansv2.managers.AllyInviteManager
 import org.quintilis.clansv2.managers.ConfigManager
 import org.quintilis.clansv2.managers.InviteManager
@@ -23,6 +24,7 @@ class Clansv2 : JavaPlugin() {
     
     private val logger = Bukkit.getLogger()
     private val configManager = ConfigManager(this.config)
+    private lateinit var luckPermsManager: LuckPermsManager;
     
     
     override fun onEnable() {
@@ -44,6 +46,7 @@ class Clansv2 : JavaPlugin() {
             logger.warning("LuckPerms não disponível neste momento.")
             null
         }
+        luckPermsManager = LuckPermsManager(lpApi)
         
         if (!MongoManager.connect(configManager.databaseURI)) {
             logger.severe("Falha ao conectar ao MongoDB. Desligando o servidor.".color(ChatColor.RED))
@@ -78,6 +81,10 @@ class Clansv2 : JavaPlugin() {
     override fun onDisable() {
         // Plugin shutdown logic
         MongoManager.close()
+    }
+    
+    fun getLuckPermsManager(): LuckPermsManager {
+        return luckPermsManager
     }
     
     private fun configFileExists(): Boolean {

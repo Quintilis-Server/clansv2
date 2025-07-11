@@ -12,15 +12,4 @@ public class ClanEditEvent extends ClanEvent {
         super(player, clan);
     }
 
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
-
 }

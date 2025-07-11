@@ -163,6 +163,10 @@ object ClanManager {
         return ally._id in clanDoc.allies && clan._id in allyDoc.allies
     }
     
+    fun isEnemy(clan: ClanEntity, enemy: ClanEntity):Boolean {
+        return enemy._id in clan.enemies && clan._id in clan.enemies
+    }
+    
     
     fun setName(name: String, clan: ClanEntity) {
         this.clan.updateOne(
