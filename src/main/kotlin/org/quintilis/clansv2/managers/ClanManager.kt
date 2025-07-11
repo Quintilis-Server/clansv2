@@ -181,4 +181,14 @@ object ClanManager {
     fun save(clan: ClanEntity) {
         this.clan.replaceOne(eq("_id", clan._id), clan)
     }
+    
+    fun updateClanPoints(clan: ClanEntity){
+        var sum = 0;
+        for(member in clan.members){
+            val memberEntity = PlayerManager.getPlayerById(member)
+            sum += memberEntity?.getPoints()!!
+        }
+        clan.points = sum
+        clan.save()
+    }
 }

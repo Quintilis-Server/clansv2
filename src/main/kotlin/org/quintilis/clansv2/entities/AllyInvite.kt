@@ -18,7 +18,7 @@ data class AllyInvite @BsonCreator constructor(
     
     @param:BsonProperty("sendDate") val sendDate: Date = Date(System.currentTimeMillis()),
     
-    @param:BsonProperty("expireDate") val expireDate: Date = Date(Date().time + AllyInviteManager.allyExpirationHours * 360000 ),
+    @param:BsonProperty("expireDate") val expireDate: Date = Date(Date().time + AllyInviteManager.getAllyExpirationHours() * 360000 ),
     
     @param:BsonProperty("accepted") var accepted: Boolean = false,
     

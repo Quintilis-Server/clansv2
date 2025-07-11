@@ -55,9 +55,11 @@ object PlayerManager {
         return this.player.find(eq("mineId", mineId)).first() != null
     }
     
+    fun saveReplace(entity: PlayerEntity) {
+        this.player.replaceOne(eq(entity._id),entity)
+    }
     
-    
-    fun save(entity: PlayerEntity): PlayerEntity {
+    private fun save(entity: PlayerEntity): PlayerEntity {
         this.player.insertOne(entity)
         return entity
     }
@@ -66,13 +68,14 @@ object PlayerManager {
         return this.player.find(eq("mineId", player.uniqueId)).first()
     }
     
-    fun saveIfNotExists(entity: Player) {
+    fun saveIfNotExists(entity: Player): PlayerEntity? {
         if (!exists(entity.uniqueId)) {
             Bukkit.getLogger().info("Colocando player na database")
             val player = PlayerEntity(mineId = entity.uniqueId, name = entity.name, _id = ObjectId())
-            this.save(player)
+            return this.save(player)
         }else{
             Bukkit.getLogger().info("Player ja está na database")
+            return null
         }
     }
 }

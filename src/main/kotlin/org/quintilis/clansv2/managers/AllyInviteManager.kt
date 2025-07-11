@@ -9,9 +9,17 @@ import java.util.Date
 object AllyInviteManager {
     val alliesInvites = MongoManager.allyInviteCollection
     
-    val allyExpirationHours: Int = 2;
+    private var allyExpirationHours: Int = 2;
     
     fun getAllyInvites() = alliesInvites.find().toList()
+    
+    fun setConfig(allyExpirationHours: Int) {
+        this.allyExpirationHours = allyExpirationHours
+    }
+    
+    fun getAllyExpirationHours(): Int{
+        return allyExpirationHours
+    }
     
     fun getAllyInvitesBySender(sender: ClanEntity): List<AllyInvite?> {
         return alliesInvites.find(eq("sender", sender._id)).toList()
