@@ -57,7 +57,7 @@ class Clansv2 : JavaPlugin() {
         }
         lpApi?.let {
             logger.info("LuckPerms encontrado via LuckPermsProvider → iniciando integração.")
-            LuckPermsInitializer(this, it).initialize()
+            LuckPermsInitializer(this, it, this.luckPermsManager).initialize()
         }
         InviteManager.setConfig(
             configManager.playerInviteExpirationHours
