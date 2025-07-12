@@ -18,11 +18,11 @@ class ClanEventListener(
     
     @EventHandler
     fun onClanDelete(event: ClanDeleteEvent) {
-    
+        luckPermsManager.deleteGroupFromClan(event.clan)
     }
     
     @EventHandler
     fun onClanEdit(event: ClanEditEvent) {
-    
+        luckPermsManager.editPrefixGroupFromClan(event.clan, event.type)
     }
 }

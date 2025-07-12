@@ -3,6 +3,7 @@ package org.quintilis.clansv2.events;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 import org.quintilis.clansv2.entities.ClanEntity;
 
 public class ClanEvent extends Event {
@@ -25,6 +26,8 @@ public class ClanEvent extends Event {
         return clan;
     }
 
+    @NotNull
+    @Override
     public HandlerList getHandlers(){
         return HANDLERS;
     }

@@ -9,10 +9,11 @@ import net.luckperms.api.node.types.PrefixNode;
 import org.quintilis.clansv2.entities.ClanEntity;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class LuckPermsManager {
-    private LuckPerms luckPerms;
+    private final LuckPerms luckPerms;
 
     public LuckPermsManager(LuckPerms luckPerms){
         this.luckPerms = luckPerms;
@@ -32,8 +33,28 @@ public class LuckPermsManager {
         for(PermissionNode node : this.createPermissionNodes(LuckPermsBaseRoles.PLAYER)){
             group.data().add(node);
         }
+        luckPerms.getGroupManager().saveGroup(group);
     }
 
+    public void deleteGroupFromClan(ClanEntity clan){
+        luckPerms.getGroupManager().deleteGroup(Objects.requireNonNull(luckPerms.getGroupManager().getGroup(clan.getName())));
+    }
+
+    public void editPrefixGroupFromClan(ClanEntity clan){
+        Group group = luckPerms.getGroupManager().getGroup(clan.getName());
+        if(group == null){
+            System.out.println("Group with name " + clan.getName() + " does not exist");
+            return;
+        }
+
+        Node prefixNode = PrefixNode.builder(clan.getTag(), 50).build();
+
+        group.data().clear(node -> node instanceof PrefixNode);
+
+        group.data().add(prefixNode);
+
+        this.luckPerms.getGroupManager().saveGroup(group);
+    }
 
     public List<PermissionNode> createPermissionNodes(LuckPermsBaseRoles role) {
         return role.getPermissions().stream()
