@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.quintilis.clansv2.entities.ClanEntity;
 
 public class ClanDeleteEvent extends ClanEvent {
-    public ClanDeleteEvent(@NotNull ClanEntity clan, @NotNull Player player) {
+    public ClanDeleteEvent(Player player, ClanEntity clan) {
         super(player, clan);
     }
 }

@@ -1,6 +1,5 @@
 package org.quintilis.clansv2
 
-import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -9,8 +8,9 @@ import org.quintilis.clansv2.commands.ally.AllyCommand
 import org.quintilis.clansv2.commands.clan.ClanCommand
 import org.quintilis.clansv2.commands.enemy.EnemyCommand
 import org.quintilis.clansv2.commands.invite.InviteCommand
-import org.quintilis.clansv2.events.DeathEventListener
-import org.quintilis.clansv2.events.PlayerEventListener
+import org.quintilis.clansv2.listeners.ClanEventListener
+import org.quintilis.clansv2.listeners.DeathEventListener
+import org.quintilis.clansv2.listeners.PlayerEventListener
 import org.quintilis.clansv2.luckperms.LuckPermsInitializer
 import org.quintilis.clansv2.luckperms.LuckPermsManager
 import org.quintilis.clansv2.managers.AllyInviteManager
@@ -69,6 +69,7 @@ class Clansv2 : JavaPlugin() {
         
         Bukkit.getPluginManager().registerEvents(PlayerEventListener(), this)
         Bukkit.getPluginManager().registerEvents(DeathEventListener(configManager), this)
+        Bukkit.getPluginManager().registerEvents(ClanEventListener(luckPermsManager = this.luckPermsManager), this)
         
         //comandos
         this.getCommand("clan")?.setExecutor(ClanCommand())

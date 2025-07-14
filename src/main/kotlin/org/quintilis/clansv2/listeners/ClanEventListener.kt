@@ -23,6 +23,7 @@ class ClanEventListener(
     
     @EventHandler
     fun onClanEdit(event: ClanEditEvent) {
-        luckPermsManager.editPrefixGroupFromClan(event.clan, event.type)
+        
+        luckPermsManager.editPrefixGroupFromClan(event.clan)
     }
 }

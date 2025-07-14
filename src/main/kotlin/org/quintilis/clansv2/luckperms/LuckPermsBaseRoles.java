@@ -6,8 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum LuckPermsBaseRoles {
-    PLAYER("Player", "", ChatColor.RESET, Arrays.asList(
+    MEMBER("Member", "", ChatColor.RESET, Arrays.asList(
             "clansv2.use"
+    )),
+    OWNER("Dono", "", ChatColor.GRAY, Arrays.asList(
+            "clansv2.use",
+            "clansv2.owner"
     )),
     MOD("Moderation", "MOD", ChatColor.AQUA, Arrays.asList(
             "clansv2.use",

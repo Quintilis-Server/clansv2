@@ -17,6 +17,11 @@ object PlayerManager {
         return player.mineId
     }
     
+    fun getMinePlayerById(id: ObjectId?): Player? {
+        val player = this.getPlayerById(id!!)!!
+        return Bukkit.getPlayer(player.mineId)
+    }
+    
     fun getPlayerByMineId(mineId: UUID): PlayerEntity? {
         return this.player.find(eq("mineId", mineId)).first()
     }

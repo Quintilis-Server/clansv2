@@ -4,7 +4,6 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.group.GroupManager;
 import net.luckperms.api.node.Node;
-import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.node.types.PermissionNode;
 import net.luckperms.api.node.types.PrefixNode;
 import org.quintilis.clansv2.Clansv2;
@@ -43,20 +42,20 @@ public class LuckPermsInitializer {
             }
             switch (role){
                 case MOD:
-                    group.data().add(luckPermsManager.createInheritanceNode(LuckPermsBaseRoles.PLAYER));
+                    group.data().add(luckPermsManager.createInheritanceNode(LuckPermsBaseRoles.MEMBER));
                     for(PermissionNode node : luckPermsManager.createPermissionNodes(LuckPermsBaseRoles.MOD)){
                         group.data().add(node);
                     }
                     break;
                 case ADM:
-                    group.data().add(luckPermsManager.createInheritanceNode(LuckPermsBaseRoles.PLAYER));
+                    group.data().add(luckPermsManager.createInheritanceNode(LuckPermsBaseRoles.MEMBER));
                     group.data().add(luckPermsManager.createInheritanceNode(LuckPermsBaseRoles.MOD));
                     for(PermissionNode node : luckPermsManager.createPermissionNodes(LuckPermsBaseRoles.ADM)){
                         group.data().add(node);
                     }
                     break;
                 default:
-                    for(PermissionNode node : luckPermsManager.createPermissionNodes(LuckPermsBaseRoles.PLAYER)){
+                    for(PermissionNode node : luckPermsManager.createPermissionNodes(LuckPermsBaseRoles.MEMBER)){
                         group.data().add(node);
                     }
                     break;
@@ -73,7 +72,7 @@ public class LuckPermsInitializer {
             Group group = this.checkAndSaveGroup(clanGroupName);
             Node groupPermissions = PermissionNode.builder("clansv2.use").build();
             Node prefixNode;
-            if(clan.getTag().isEmpty()){
+            if(clan.getTag() == null||clan.getTag().isEmpty()){
                 prefixNode = PrefixNode.builder("", 100).build();
             }else{
                 prefixNode = PrefixNode.builder(clan.getTag(), 50).build();

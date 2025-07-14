@@ -1,4 +1,4 @@
-package org.quintilis.clansv2.events
+package org.quintilis.clansv2.listeners
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

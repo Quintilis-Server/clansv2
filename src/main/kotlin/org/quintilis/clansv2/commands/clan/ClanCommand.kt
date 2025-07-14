@@ -11,6 +11,8 @@ import org.bukkit.entity.Player
 import org.quintilis.clansv2.commands.CommandException
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.entities.PlayerEntity
+import org.quintilis.clansv2.events.ClanCreateEvent
+import org.quintilis.clansv2.events.ClanDeleteEvent
 import org.quintilis.clansv2.managers.ClanManager
 import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.PlayerManager
@@ -124,6 +126,9 @@ class ClanCommand: CommandExecutor, TabExecutor {
         val clan = ClanEntity(name = name, tag = tag, owner = PlayerManager.getPlayerByMineId((commandSender).uniqueId)!!._id, _id = ObjectId())
         ClanManager.create(clan,commandSender)
         
+        val event = ClanCreateEvent(player, clan)
+        Bukkit.getPluginManager().callEvent(event)
+        
         commandSender.sendMessage("Clã ${clan.name} criado com sucesso!")
     }
     
@@ -134,6 +139,8 @@ class ClanCommand: CommandExecutor, TabExecutor {
             return
         }
         ClanManager.delete(clan)
+        val event = ClanDeleteEvent(commandSender, clan)
+        Bukkit.getPluginManager().callEvent(event)
         commandSender.sendMessage("Clã deletado com sucesso!")
     }
     

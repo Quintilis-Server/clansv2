@@ -9,6 +9,8 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.quintilis.clansv2.entities.ClanEntity
 import org.quintilis.clansv2.entities.PlayerEntity
+import org.quintilis.clansv2.events.ClanEditEvent
+import org.quintilis.clansv2.events.ClanEditEventType
 import org.quintilis.clansv2.string.bold
 import org.quintilis.clansv2.string.color
 
@@ -169,6 +171,9 @@ object ClanManager {
     
     
     fun setName(name: String, clan: ClanEntity) {
+        val owner = PlayerManager.getMinePlayerById(clan.owner)
+        val event = ClanEditEvent(owner, clan, ClanEditEventType.NAME, clan.name)
+        Bukkit.getPluginManager().callEvent(event)
         this.clan.updateOne(
             eq("_id", clan._id),
             set("name", name)
@@ -176,6 +181,9 @@ object ClanManager {
     }
     
     fun setTag(tag: String,clan: ClanEntity) {
+        val owner = PlayerManager.getMinePlayerById(clan.owner)
+        val event = ClanEditEvent(owner, clan, ClanEditEventType.TAG)
+        Bukkit.getPluginManager().callEvent(event)
         this.clan.updateOne(
             eq("_id", clan._id),
             set("tag", tag)
