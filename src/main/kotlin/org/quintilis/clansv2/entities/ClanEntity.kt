@@ -12,7 +12,7 @@ data class ClanEntity @BsonCreator constructor(
     @param:BsonProperty("name") val name: String = "",                 // default
     @param:BsonProperty("tag") val tag: String? = null,
     @param:BsonProperty("members") val members: MutableList<ObjectId> = mutableListOf(),
-    @param:BsonProperty("points") val points: Int = 0,
+    @param:BsonProperty("points") var points: Int = 0,
     @param:BsonProperty("allies") val allies: MutableList<ObjectId> = mutableListOf(),
     @param:BsonProperty("enemies") val enemies: MutableList<ObjectId> = mutableListOf(),
     @param:BsonProperty("owner") val owner: ObjectId,
