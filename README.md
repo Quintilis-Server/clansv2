@@ -8,7 +8,7 @@ The plugin was designed for use on the "Quintilis" war server, and this is the s
 
 ## Installation
 
-- First you'll need [mongodb](https://www.mongodb.com/) with a valid URI, and [LuckPerms](https://luckperms.net/).
+- First you'll need [mongodb](https://www.mongodb.com/) with a valid URI.
 - Add the plugin to the `plugins` folder on your server and start the server to generate the `config.yml` file.
 - In the `config.yml` file you edit the `database.mongodb.uri` and put the URI for the Mongo database.
 
