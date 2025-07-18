@@ -5,12 +5,11 @@ import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
 import org.quintilis.clansv2.commands.ally.AllyCommand
 import org.quintilis.clansv2.commands.clan.ClanCommand
-import org.quintilis.clansv2.commands.clan.ClanCommands
 import org.quintilis.clansv2.commands.enemy.EnemyCommand
 import org.quintilis.clansv2.commands.invite.InviteCommand
-import org.quintilis.clansv2.commands.war.WarCommand
-import org.quintilis.clansv2.events.DeathEventListener
-import org.quintilis.clansv2.events.PlayerEventListener
+import org.quintilis.clansv2.listeners.ChatEventListener
+import org.quintilis.clansv2.listeners.DeathEventListener
+import org.quintilis.clansv2.listeners.PlayerEventListener
 import org.quintilis.clansv2.managers.AllyInviteManager
 import org.quintilis.clansv2.managers.ConfigManager
 import org.quintilis.clansv2.managers.InviteManager
@@ -51,6 +50,8 @@ class Clansv2 : JavaPlugin() {
         
         Bukkit.getPluginManager().registerEvents(PlayerEventListener(), this)
         Bukkit.getPluginManager().registerEvents(DeathEventListener(configManager), this)
+        Bukkit.getPluginManager().registerEvents(ChatEventListener(), this)
+        
         
         //comandos
         this.getCommand("clan")?.setExecutor(ClanCommand())
