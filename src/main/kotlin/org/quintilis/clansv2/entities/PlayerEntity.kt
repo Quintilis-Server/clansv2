@@ -4,6 +4,7 @@ import org.bson.codecs.pojo.annotations.BsonCreator
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonProperty
 import org.bson.types.ObjectId
+import org.quintilis.clansv2.enums.UserRoles
 import org.quintilis.clansv2.managers.PlayerManager
 import java.util.UUID
 
@@ -13,6 +14,7 @@ data class PlayerEntity @BsonCreator constructor(
     @param:BsonProperty("name")                   val name: String,
     @param:BsonProperty("points")                 private var points: Int = 0,
     @param:BsonProperty("clanId")                 val clanId: ObjectId? = null,
+    @param:BsonProperty("role")                   val role: UserRoles? = UserRoles.PLAYER,
 ){
     override fun toString(): String {
         return "_id: $_id, mineId: $mineId, name: $name, points: $points, clanId: $clanId"

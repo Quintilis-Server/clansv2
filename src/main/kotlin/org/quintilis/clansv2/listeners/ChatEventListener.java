@@ -6,7 +6,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.quintilis.clansv2.entities.ClanEntity;
+import org.quintilis.clansv2.entities.PlayerEntity;
+import org.quintilis.clansv2.enums.UserRoles;
 import org.quintilis.clansv2.managers.ClanManager;
+import org.quintilis.clansv2.managers.PlayerManager;
 
 public class ChatEventListener implements Listener {
 
@@ -15,19 +18,19 @@ public class ChatEventListener implements Listener {
         Player player = event.getPlayer();
 
         ClanEntity clan = ClanManager.INSTANCE.getClanByMember(player);
-        if(clan != null) {
-//            event.setCancelled(true);
-            event.setFormat(buildChatFormat(player,clan,event.getMessage()));
-        }else{
-            event.setCancelled(false);
-        }
+        event.setFormat(buildChatFormat(player,clan, event.getMessage()));
     }
     private String buildChatFormat(Player player, ClanEntity clan, String message) {
         String format = "";
-        if(clan.getTag() != null && !clan.getTag().isEmpty()) {
-            format += ChatColor.AQUA + "[" +clan.getTag() + "]" + ChatColor.RESET;
+        PlayerEntity playerEntity = PlayerManager.INSTANCE.getPlayerEntityByPlayer(player);
+        if(playerEntity != null && playerEntity.getRole() != null) {
+            UserRoles role = playerEntity.getRole();
+            format += role.getColor() + "[" + role.getTag() + "] " + ChatColor.RESET;
         }
-        format += " <" + player.getDisplayName() + ">: "+ message + ChatColor.RESET;
+        if(clan != null && clan.getTag() != null && !clan.getTag().isEmpty()) {
+            format += ChatColor.AQUA + "[" +clan.getTag() + "] " + ChatColor.RESET;
+        }
+        format += "<" + player.getDisplayName() + ">: " + ChatColor.RESET + message;
         return format;
     }
 }
