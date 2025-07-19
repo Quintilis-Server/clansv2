@@ -47,10 +47,11 @@ public class ClansScoreboard implements Runnable{
         List<PlayerEntity> playersSorted = players.stream()
                 .sorted(Comparator.comparingInt(PlayerEntity::getPoints))
                 .collect(Collectors.toList());
-//        int max = Math.min(5, playersSorted.size());
-//        for(int i = 29; i >= 29-max; i--){
-//            objective.getScore(playersSorted.get(i).getName()).setScore(i);
-//        }
+        int max = Math.min(5, playersSorted.size());
+        for(int i = 29; i > 29-max; i--){
+//            System.out.println(i +"/"+ max);
+            objective.getScore(playersSorted.get(29-i).getName()).setScore(i);
+        }
 //        System.out.println(objective.getDisplayName());
         player.setScoreboard(scoreboard);
     }
