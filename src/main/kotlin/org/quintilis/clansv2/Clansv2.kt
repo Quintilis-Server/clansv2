@@ -14,6 +14,7 @@ import org.quintilis.clansv2.managers.AllyInviteManager
 import org.quintilis.clansv2.managers.ConfigManager
 import org.quintilis.clansv2.managers.InviteManager
 import org.quintilis.clansv2.managers.MongoManager
+import org.quintilis.clansv2.scoreboard.ClansScoreboard
 import org.quintilis.clansv2.string.color
 
 class Clansv2 : JavaPlugin() {
@@ -46,6 +47,8 @@ class Clansv2 : JavaPlugin() {
         AllyInviteManager.setConfig(
             configManager.allyInviteExpirationHours,
         )
+        
+        server.scheduler.runTaskTimer(this, ClansScoreboard(), 1, 40)
         
         
         Bukkit.getPluginManager().registerEvents(PlayerEventListener(), this)

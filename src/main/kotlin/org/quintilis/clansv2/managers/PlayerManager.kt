@@ -12,9 +12,8 @@ import java.util.UUID
 object PlayerManager {
     private val player = MongoManager.playerCollection
     
-    fun getUUID(id: ObjectId?): UUID {
-        val player = this.getPlayerById(id!!)!!
-        return player.mineId
+    fun getAllPlayers(): List<PlayerEntity> {
+        return this.player.find().toList()
     }
     
     fun getPlayerByMineId(mineId: UUID): PlayerEntity? {
