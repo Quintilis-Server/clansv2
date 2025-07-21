@@ -7,7 +7,9 @@ import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+import org.quintilis.clansv2.entities.ClanEntity;
 import org.quintilis.clansv2.entities.PlayerEntity;
+import org.quintilis.clansv2.managers.ClanManager;
 import org.quintilis.clansv2.managers.PlayerManager;
 
 import java.util.Arrays;
@@ -49,10 +51,23 @@ public class ClansScoreboard implements Runnable{
                 .collect(Collectors.toList());
         int max = Math.min(5, playersSorted.size());
         for(int i = 29; i > 29-max; i--){
-//            System.out.println(i +"/"+ max);
             objective.getScore(playersSorted.get(29-i).getName()).setScore(i);
         }
-//        System.out.println(objective.getDisplayName());
+        int newScore = 29-max;
+        objective.getScore("").setScore(newScore);
+        objective.getScore(ChatColor.RED + "-- Clãs --").setScore(--newScore);
+        List<ClanEntity> clans = ClanManager.INSTANCE.getAllClans();
+        System.out.println(clans);
+        List<ClanEntity> clansSorted = clans.stream()
+                        .sorted(Comparator.comparingInt(ClanEntity::getPoints))
+                        .collect(Collectors.toList());
+
+        int maxClan = Math.min(5, clansSorted.size());
+        for(int i = --newScore; i<maxClan; i--){
+            objective.getScore(clansSorted.get(newScore - i).getName()).setScore(i);
+        }
+
+
         player.setScoreboard(scoreboard);
     }
 }
